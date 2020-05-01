@@ -1,0 +1,5 @@
+*__pycache__*
+*.dll
+*egg-info*
+*dist*
+*docs/build*
