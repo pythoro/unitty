@@ -16,13 +16,14 @@ def set_base(b):
     unit_bases = b.bases
 
 class Unit():
-    def __init__(self, name, mult, unit_type):
-        self.name = name
+    def __init__(self, abbr, mult, unit_type, name):
+        self.abbr = abbr
         self.unit_type = unit_type
         self.mult = mult
+        self.name = name
         
     def __str__(self):
-        return (self.name + ' ({:0.3g}'.format(self.mult) 
+        return (self.abbr + ' ({:0.3g}'.format(self.mult) 
                                + ' ' + unit_bases[self.unit_type]) + ')'
 
     def __repr__(self):
@@ -39,7 +40,7 @@ class Unit():
 
 
 class Units(dict):
-    def __getattr__(self, name):
-        if name in self:
-            return self[name]
-        return self.__getattribute__(name)
+    def __getattr__(self, abbr):
+        if abbr in self:
+            return self[abbr]
+        return self.__getattribute__(abbr)

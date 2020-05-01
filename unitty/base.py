@@ -43,39 +43,44 @@ class Base():
                 out[unit_type] = {}
             unit_dct = out[unit_type]
             for unit, v in d.items():
+                if len(v) != 3:
+                    raise ValueError('Unit ' + unit + ' incorrectly specified.')
+                mult, base, name = v
                 if unit == '_base':
-                    self.safe_set(unit_dct, v, 1.0)
-                    bases[unit_type] = v
-                if isinstance(v, list):
-                    mult, base = v
-                    self.safe_set(unit_dct, unit, unit_dct[base] * mult)
+                    dct_2 = {'mult': mult, 'name': name}
+                    bases[unit_type] = base
+                    self.safe_set(unit_dct, base, dct_2)
                 else:
-                    self.safe_set(unit_dct, unit, v)
+                    dct_2 = {'mult': unit_dct[base]['mult'] * mult,
+                             'name': name}
+                    self.safe_set(unit_dct, unit, dct_2)
         return out, bases
     
     def _make_unit_dct(self, type_dct):
         out = {}
         for unit_type, d in type_dct.items():
-            for unit, v in d.items():
+            for unit, d2 in d.items():
+                dct = dict(d2)
+                dct['unit_type'] = unit_type
                 if unit != '_base':
-                    self.safe_set(out, unit, {'mult': v, 'unit_type': unit_type})
+                    self.safe_set(out, unit, dct)
         return out
 
-    def __getitem__(self, key):
-        return self._unit_dct[key]['mult']
+    def __getitem__(self, abbr):
+        return self._unit_dct[abbr]['mult']
 
-    def __getattr__(self, key):
-        if key != '_unit_dct' and key in self._unit_dct:
-            return self._unit_dct[key]['mult']
+    def __getattr__(self, abbr):
+        if abbr != '_unit_dct' and abbr in self._unit_dct:
+            return self._unit_dct[abbr]['mult']
         else:
-            return self.__getattribute__(key)
+            return self.__getattribute__(abbr)
         
-    def mult(self, key):
-        return self._unit_dct[key]['mult']
+    def mult(self, abbr):
+        return self._unit_dct[abbr]['mult']
     
-    def get_unit(self, key):
-        d = self._unit_dct[key]
-        return Unit(key, d['mult'], d['unit_type'])
+    def get_unit(self, abbr):
+        d = self._unit_dct[abbr]
+        return Unit(abbr, **d)
     
     def all_units(self):
         return Units({k: self.get_unit(k) for k in self._unit_dct.keys()})
