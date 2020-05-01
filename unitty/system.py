@@ -72,7 +72,7 @@ class System():
         except KeyError:
             raise KeyError('unit type "' + unit_type + '" not recognised.')
         for (unit, mult) in zip(d['units'], d['mults']):
-            if val > mult:
+            if val >= mult:
                 break
         return val / mult, unit
 
