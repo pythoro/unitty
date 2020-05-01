@@ -11,36 +11,57 @@ def set_systems(sys):
     global systems
     systems = sys
 
-DERIVATIONS = {
-    'length * length': 'area',
-    'length / length': None,
-    'length * area': 'volume',
-    'area * length': 'volume',
-    'area / area': None,
-    'mass / volume': 'density',
-    'mass / mass': None,
-    'force / area': 'pressure',
-    'force / force': None,
-    'force * length': 'energy',
-    'length * force': 'energy',
-    'length / time': 'speed',
-    'time / time': None,
-    'energy / time': 'power',
-    'energy / energy': None,
+MULT_DERIVATIONS = {
+        ('length', 'length'): 'area',
+        ('length', 'area'): 'volume',
+        ('force', 'length'): 'energy',
+    }
+
+DIV_DERIVATIONS = {
+        ('length', 'area'): 'volume',
+        ('mass', 'volume'): 'density',
+        ('force', 'area'): 'pressure',
+        ('length', 'time'): 'speed',
+        ('energy', 'time'): 'power',
     }
 
 
-def derive_unit(s):
-    if s in DERIVATIONS:
-        return DERIVATIONS[s]
+def get_compound_type(t1, t2, method='mult'):
+    # TODO: Break apart complex types like pressure
+    if not isinstance(t1, dict):
+        t1 = {'num': [t1], 'den': []}
+    if not isinstance(t2, dict):
+        t2 = {'num': [t2], 'den': []}
+    if method == 'mult':
+        num = t1['num'] + t2['num']
+        den = t1['den'] + t2['den']
     else:
-        raise ValueError(s + ' does not match a known unit type.')
+        num = t1['num'] + t2['den']
+        den = t1['den'] + t2['num']       
+    for n in num.copy():
+        if n in den:
+            num.remove(n)
+            den.remove(n)        
+    return {'num': num, 'den': den}
+
 
 def get_mult_type(t1, t2):
-    return t1 + ' * ' + t2
+    if isinstance(t1, dict) or isinstance(t2, dict):
+        return get_compound_type(t1, t2, 'mult')
+    if (t1, t2) in MULT_DERIVATIONS:
+        return MULT_DERIVATIONS[(t1, t2)]
+    elif (t2, t1) in MULT_DERIVATIONS:
+        return MULT_DERIVATIONS[(t2, t1)]
+    else:
+        return {'num': [t1, t2], 'den': []}
 
 def get_div_type(t1, t2):
-    return t1 + ' / ' + t2
+    if isinstance(t1, dict) or isinstance(t2, dict):
+        return get_compound_type(t1, t2, 'div')
+    if (t1, t2) in DIV_DERIVATIONS:
+        return DIV_DERIVATIONS[(t1, t2)]
+    else:
+        return {'num': [t1], 'den': [t2]}
 
 
 class Quantity():
@@ -83,13 +104,11 @@ class Quantity():
         return other / self.value
     
     def _mul(self, other):
-        s = get_mult_type(self.unit_type, other.unit_type)
-        unit_type = derive_unit(s)
+        unit_type = get_mult_type(self.unit_type, other.unit_type)
         return Quantity(self.value * other.value, unit_type=unit_type)
 
     def _div(self, other):
-        s = get_div_type(self.unit_type, other.unit_type)
-        unit_type = derive_unit(s)
+        unit_type = get_div_type(self.unit_type, other.unit_type)
         return Quantity(self.value / other.value, unit_type=unit_type)
 
     def _pow(self, other):
@@ -99,3 +118,4 @@ class Quantity():
         return new
         
             
+    

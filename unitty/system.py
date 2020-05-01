@@ -69,6 +69,8 @@ class System():
         return d
     
     def unitise(self, val, unit_type):
+        if isinstance(unit_type, dict):
+            return self.unitise_compound(val, unit_type)
         if unit_type is None:
             return val, None
         try:
@@ -81,29 +83,23 @@ class System():
         return val / mult, unit
     
     def unitise_compound(self, val, unit_type):
-        if 'nom' in unit_type:
-            nom = unit_type['nom']
-        else:
-            nom = []
-        if 'den' in unit_type:
-            den = unit_type['den']
-        else:
-            den = []
-        str_nom = []
+        num = unit_type['num']
+        den = unit_type['den']
+        str_num = []
         str_den = []
         new_val = val
-        for ut in nom:
+        for ut in num:
             new_val, unit_str = self.unitise(new_val, ut)
-            str_nom.append(unit_str)
+            str_num.append(unit_str)
         for ut in den:
             _, unit_str = self.unitise(1, ut)
             str_den.append(unit_str)
         if len(den) == 0:
-            str_out = '.'.join(str_nom)
+            str_out = '.'.join(str_num)
         elif len(den) == 1:
-            str_out = '.'.join(str_nom) + '/' + str_den[0]
+            str_out = '.'.join(str_num) + '/' + str_den[0]
         else:
-            str_out = '.'.join(str_nom) + '/(' + '.'.join(str_den) + ')'
+            str_out = '.'.join(str_num) + '/(' + '.'.join(str_den) + ')'
         return new_val, str_out
         
 
