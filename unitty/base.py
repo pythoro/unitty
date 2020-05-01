@@ -47,7 +47,7 @@ class Base():
                     raise ValueError('Unit ' + unit + ' incorrectly specified.')
                 mult, base, name = v
                 if unit == '_base':
-                    dct_2 = {'mult': mult, 'name': name}
+                    dct_2 = {'mult': 1.0, 'name': name}
                     bases[unit_type] = base
                     self.safe_set(unit_dct, base, dct_2)
                 else:

@@ -1,4 +1,7 @@
 metric:
     length: [um, mm, m, km]
+    area: [mm2, cm2, m2, km2]
+    volume: [mL, L, m3]
+    mass: [mg, g, kg, ton]
 imperial:
     length: [in, [3, ft]]
