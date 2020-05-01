@@ -9,5 +9,6 @@ metric:
     time: [us, ms, s]
     speed: [mps]
     power: [W, kW]
+    force: [mN, N, kN]
 imperial:
     length: [in, [3, ft]]

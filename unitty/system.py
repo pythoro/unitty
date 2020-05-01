@@ -92,7 +92,10 @@ class System():
             new_val, unit_str = self.unitise(new_val, ut)
             str_num.append(unit_str)
         for ut in den:
-            _, unit_str = self.unitise(1, ut)
+            if new_val < 1e-3 or new_val > 1e3:
+                new_val, unit_str = self.unitise(new_val, ut)
+            else:
+                _, unit_str = self.unitise(1, ut)
             str_den.append(unit_str)
         if len(den) == 0:
             str_out = '.'.join(str_num)
