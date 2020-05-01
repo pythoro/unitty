@@ -11,5 +11,6 @@ from . import quantity
 from . import unit
 
 quantity.set_systems(system.systems)
+unit.set_base(base.base)
 
 units = base.base.all_units()

@@ -19,7 +19,7 @@ class Base():
     
     def load(self, fname=None):
         raw = self._load_raw(fname)
-        self._type_dct = self._make_type_dct(raw)
+        self._type_dct, self.bases = self._make_type_dct(raw)
         self._unit_dct = self._make_unit_dct(self._type_dct)
     
     def _load_raw(self, fname=None):
@@ -37,6 +37,7 @@ class Base():
     
     def _make_type_dct(self, dct):
         out = {}
+        bases = {}
         for unit_type, d in dct.items():
             if unit_type not in out:
                 out[unit_type] = {}
@@ -44,12 +45,13 @@ class Base():
             for unit, v in d.items():
                 if unit == '_base':
                     self.safe_set(unit_dct, v, 1.0)
+                    bases[unit_type] = v
                 if isinstance(v, list):
                     mult, base = v
                     self.safe_set(unit_dct, unit, unit_dct[base] * mult)
                 else:
                     self.safe_set(unit_dct, unit, v)
-        return out
+        return out, bases
     
     def _make_unit_dct(self, type_dct):
         out = {}

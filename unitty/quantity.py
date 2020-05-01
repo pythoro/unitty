@@ -24,7 +24,7 @@ class Quantity():
         return self.__str__()
     
     def __mul__(self, other):
-        return Quantity(self.value.__mul__(other), self.unit_type)
+        return self.value.__mul__(other)
     
     def __rmul__(self, other):
-        return Quantity(self.value.__rmul__(other), self.unit_type)
+        return self.value.__rmul__(other)
