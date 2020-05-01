@@ -63,7 +63,7 @@ class Unit():
 
     def __mul__(self, other):
         if isinstance(other, Unit):
-            new_unit_type = derive_mult(self.unit_type, other.unit_type)
+            new_unit_type = self.mul_type(other.unit_type)
             return Quantity(other.mult * self.mult, new_unit_type)
         else:
             return Quantity(other * self.mult, self.unit_type)
@@ -73,7 +73,7 @@ class Unit():
 
     def __truediv__(self, other):
         if isinstance(other, Unit):
-            new_unit_type = derive_div(self.unit_type, other.unit_type)
+            new_unit_type = self.div_type(other.unit_type)
             return Quantity(other.mult * self.mult, new_unit_type)
         else:
             return Quantity(other * self.mult, self.unit_type)
@@ -86,7 +86,6 @@ class Unit():
 
     def __rrshift__(self, other):
         return other / self.mult
-
     
 
 class Units(dict):
@@ -96,3 +95,34 @@ class Units(dict):
         return self.__getattribute__(abbr)
     
     
+class Length(Unit):
+    def mul_type(self, typ):
+        if typ == 'length':
+            return 'area'
+        if typ == 'area':
+            return 'volume'
+        raise ValueError('Can not multiply length by ' + typ)
+
+
+class Area(Unit):
+    pass
+
+class Volume(Unit):
+    pass
+
+class Force(Unit):
+    pass
+
+class Unit_Factory():
+    @classmethod
+    def new(cls, **dct):
+        t = dct['unit_type']
+        if t == 'length':
+            return Length(**dct)
+        elif t == 'area':
+            return Area(**dct)
+        elif t == 'volume':
+            return Volume(**dct)
+        else:
+            return Unit(**dct)
+        

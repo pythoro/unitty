@@ -8,7 +8,7 @@ Created on Thu Apr 30 18:15:23 2020
 import os
 import ruamel.yaml as yaml
 
-from .unit import Unit, Units
+from .unit import Unit_Factory, Units
 
 root = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,6 +21,7 @@ class Base():
     def load(self, fname=None):
         raw = self._load_raw(fname)
         self._type_dct, self.bases = self._make_type_dct(raw)
+        self.all_units = Units({k: self.get_unit(k) for k in self._unit_dct.keys()})
     
     def _load_raw(self, fname=None):
         if fname is None:
@@ -90,13 +91,11 @@ class Base():
     
     def get_unit(self, abbr):
         d = self._unit_dct[abbr]
-        return Unit(abbr, **d)
+        return Unit_Factory.new(abbr=abbr, **d)
     
-    def all_units(self):
-        return Units({k: self.get_unit(k) for k in self._unit_dct.keys()})
 
 base = Base()
-
+units = base.all_units
 
 
         

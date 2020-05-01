@@ -20,5 +20,5 @@ def init():
 if not initialised:
     init()
 
-units = base.base.all_units()
+units = base.units
 set_system = system.set_system
