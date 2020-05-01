@@ -28,11 +28,14 @@ class Unit():
     def __repr__(self):
         return self.__str__()
 
-    def __rmul__(self, other):
+    def __rmatmul__(self, other):
         return Quantity(other * self.mult, self.unit_type)
 
-    def __rmatmul__(self, other):
+    def __rmul__(self, other):
         return other * self.mult
+
+    def __rrshift__(self, other):
+        return other / self.mult
 
 
 class Units(dict):

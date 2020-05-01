@@ -23,8 +23,6 @@ class Quantity():
     def __repr__(self):
         return self.__str__()
     
-    def __mul__(self, other):
-        return self.value.__mul__(other)
+    def __truediv__(self, other):
+        return self.value / other
     
-    def __rmul__(self, other):
-        return self.value.__rmul__(other)

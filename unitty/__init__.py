@@ -10,7 +10,14 @@ from . import system
 from . import quantity
 from . import unit
 
-quantity.set_systems(system.systems)
-unit.set_base(base.base)
+initialised = False
+def init():
+    global initialised
+    quantity.set_systems(system.systems)
+    unit.set_base(base.base)
+    initialised = True
+    
+if not initialised:
+    init()
 
 units = base.base.all_units()
