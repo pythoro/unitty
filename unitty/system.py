@@ -59,12 +59,14 @@ class System():
         return d
     
     def unitise(self, val, unit_type):
-        d = self._sys_dct[unit_type]
+        try:
+            d = self._sys_dct[unit_type]
+        except KeyError:
+            raise KeyError('unit type "' + unit_type + '" not recognised.')
         for (unit, mult) in zip(d['units'], d['mults']):
             if val > mult:
-                return val / mult, unit
-        raise ValueError('Could not unitize ' + str(val) + ' of unit_type ' +
-                         unit_type)
+                break
+        return val / mult, unit
 
 
 systems = Systems()        
