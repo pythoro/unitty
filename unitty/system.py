@@ -54,13 +54,15 @@ class System():
         for unit_type, units_raw in dct.items():
             mults = []
             units = []
-            for unit in units_raw:
-                if isinstance(unit, list):
-                    mults.append(unit[0] * base.mult(unit[1]))
-                    units.append(unit[1])
+            for abbr in units_raw:
+                if isinstance(abbr, list):
+                    unit = base[abbr[1]]
+                    mults.append(abbr[0] * unit.mult)
+                    units.append(abbr[1])
                 else:
-                    mults.append(base.mult(unit))
-                    units.append(unit)
+                    unit = base[abbr]
+                    mults.append(unit.mult)
+                    units.append(abbr)
             mults.reverse()
             units.reverse()
             d[unit_type] = {'units': units, 'mults': mults}

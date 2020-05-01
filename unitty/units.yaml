@@ -1,5 +1,5 @@
 length:
-    _base: [1.0, m, meter]
+    _base: [m, 1.0, meter]
     # Metric
     cm: [1e-2, m, centimeter]
     mm: [1e-3, m, millimeter]
@@ -15,7 +15,7 @@ length:
     th: [1e-3, in, thou]
     mil: [1e-3, in, mil]
 area:
-    _base: [1.0, m2, square meter]
+    _base: [m2, {num: [m, m]}, square meter]
     # Metric
     mm2: [1.0, {num: [mm, mm]}, square millimeters]
     cm2: [1.0, {num: [cm, cm]}, square centimeters]
@@ -25,7 +25,7 @@ area:
     ft2: [1.0, {num: [ft, ft]}, square feet]
     mi2: [1.0, {num: [mi, mi]}, square miles]
 volume:
-    _base: [1.0, m3, cubic meter]
+    _base: [m3, {num: [m, m, m]}, cubic meter]
     # Metric
     L: [1e-3, m3, liter]
     mL: [1e-3, L, milliliter]
@@ -34,7 +34,7 @@ volume:
     in3: [1.6387063998585427e-05, m3, cubic inches]
     ft3: [0.028316846592, m3, cubic feet]
 mass:
-    _base: [1.0, kg, kilogram]
+    _base: [kg, 1.0, kilogram]
     # Metric
     g: [1e-3, kg, gram]
     mg: [1e-6, kg, milligram]
@@ -43,11 +43,11 @@ mass:
     lbs: [0.45359237, kg, pound mass]
     ton: [2240, lbs, ton]
 energy:
-    _base: [1.0, J, joule]
+    _base: [J, 1.0, joule]
     # Metric
     kJ: [1e3, J, kilojoule]
 force:
-    _base: [1.0, N, newton]
+    _base: [N, 1.0, newton]
     # Metric
     mN: [1e-3, N, millinewton]
     kN: [1e3, N, kilonewton]
@@ -55,7 +55,7 @@ force:
     lbf: [4.4482216152605, N, pounds force]
     kip: [4448.2216, N, kip]
 pressure:
-    _base: [1.0, Pa, pascal]
+    _base: [Pa, 1.0, pascal]
     # Metric
     hPa: [1e2, Pa, hectopascal]
     kPa: [1e3, Pa, kilopascal]
@@ -69,7 +69,7 @@ pressure:
     ksi: [68947.5728, Pa, kilopounds per square inch]
     psf: [47.880208, Pa, pounds force per square foot]
 density:
-    _base: [1.0, kgm3, kilograms per cubic meter]
+    _base: [kgm3, 1.0, kilograms per cubic meter]
     # Metric
     gm3: [1.0, {num: [g], den: [m3]}, grams per cubic meter]
     # Imperial
