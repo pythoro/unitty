@@ -21,3 +21,4 @@ if not initialised:
     init()
 
 units = base.base.all_units()
+set_system = system.set_active

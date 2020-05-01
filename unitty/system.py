@@ -34,7 +34,7 @@ class Systems():
     def _make_sys_dct(self, raw):
         return {n: System(dct) for n, dct in raw.items()}
     
-    def set_active(self, name):
+    def set_system(self, name):
         self._active = name
     
     @property
@@ -51,8 +51,16 @@ class System():
     
     def _make_sys_dct(self, dct):
         d = {}
-        for unit_type, units in dct.items():
-            mults = [base.mult(unit) for unit in units]
+        for unit_type, units_raw in dct.items():
+            mults = []
+            units = []
+            for unit in units_raw:
+                if isinstance(unit, list):
+                    mults.append(unit[0] * base.mult(unit[1]))
+                    units.append(unit[1])
+                else:
+                    mults.append(base.mult(unit))
+                    units.append(unit)
             mults.reverse()
             units.reverse()
             d[unit_type] = {'units': units, 'mults': mults}
@@ -71,5 +79,5 @@ class System():
 
 systems = Systems()        
 active = systems.active
-set_active = systems.set_active
+set_system = systems.set_system
 
