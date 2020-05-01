@@ -15,12 +15,12 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 class Base():
     def __init__(self, fname=None):
+        self._unit_dct = {}
         self.load(fname)
     
     def load(self, fname=None):
         raw = self._load_raw(fname)
         self._type_dct, self.bases = self._make_type_dct(raw)
-        self._unit_dct = self._make_unit_dct(self._type_dct)
     
     def _load_raw(self, fname=None):
         if fname is None:
@@ -34,6 +34,18 @@ class Base():
             raise KeyError(key + ' already defined.')
         else:
             unit_dct[key] = val
+    
+    def _derive(self, dct):
+        unit_dct = self._unit_dct
+        num = 1.0
+        den = 1.0
+        if 'num' in dct:
+            for unit in dct['num']:
+                num *= unit_dct[unit]['mult']
+        if 'den' in dct:
+            for unit in dct['den']:
+                den *= unit_dct[unit]['mult']
+        return num/den
     
     def _make_type_dct(self, dct):
         out = {}
@@ -50,21 +62,19 @@ class Base():
                     dct_2 = {'mult': 1.0, 'name': name}
                     bases[unit_type] = base
                     self.safe_set(unit_dct, base, dct_2)
+                    self._add_to_unit_dct(base, unit_type=unit_type, **dct_2)
                 else:
-                    dct_2 = {'mult': unit_dct[base]['mult'] * mult,
-                             'name': name}
+                    if isinstance(base, dict):
+                        b = self._derive(base)
+                    else:
+                        b = unit_dct[base]['mult']
+                    dct_2 = {'mult': b * mult, 'name': name}
                     self.safe_set(unit_dct, unit, dct_2)
+                    self._add_to_unit_dct(unit, unit_type=unit_type, **dct_2)
         return out, bases
     
-    def _make_unit_dct(self, type_dct):
-        out = {}
-        for unit_type, d in type_dct.items():
-            for unit, d2 in d.items():
-                dct = dict(d2)
-                dct['unit_type'] = unit_type
-                if unit != '_base':
-                    self.safe_set(out, unit, dct)
-        return out
+    def _add_to_unit_dct(self, unit, **dct):
+        self.safe_set(self._unit_dct, unit, dct)
 
     def __getitem__(self, abbr):
         return self._unit_dct[abbr]['mult']

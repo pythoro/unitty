@@ -17,13 +17,13 @@ length:
 area:
     _base: [1.0, m2, square meter]
     # Metric
-    mm2: [1e-6, m2, square millimeters]
-    cm2: [1e-4, m2, square centimeters]
-    km2: [1e6, m2, square kilometers]
+    mm2: [1.0, {'num': [mm, mm]}, square millimeters]
+    cm2: [1.0, {'num': [cm, cm]}, square centimeters]
+    km2: [1.0, {'num': [km, km]}, square kilometers]
     # Imperial
-    in2: [0.00064516, m2, square inches]
-    ft2: [0.09290304, m2, square feet]
-    mi2: [2589988.110336, m2, square miles]
+    in2: [1.0, {'num': [in, in]}, square inches]
+    ft2: [1.0, {'num': [ft, ft]}, square feet]
+    mi2: [1.0, {'num': [mi, mi]}, square miles]
 volume:
     _base: [1.0, m3, cubic meter]
     # Metric
