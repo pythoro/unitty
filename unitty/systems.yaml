@@ -3,5 +3,8 @@ metric:
     area: [mm2, cm2, m2, km2]
     volume: [mL, L, m3]
     mass: [mg, g, kg, ton]
+    pressure: [Pa, kPa, MPa, GPa]
+    energy: [J]
+    density: [kgm3]
 imperial:
     length: [in, [3, ft]]
