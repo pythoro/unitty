@@ -8,18 +8,18 @@ Created on Thu Apr 30 18:15:23 2020
 import os
 import ruamel.yaml as yaml
 
-from .unit import Unit_Factory, Units, Unit
+from .unit import Unit
 
 root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Base():
     def __init__(self, fname=None):
-        self.units = {}
-        self.bases = {}
         self.load(fname)
     
     def load(self, fname=None):
+        self.units = {}
+        self.bases = {}
         raw = self._load_raw(fname)
         self._make_type_dct(raw)
     
@@ -42,11 +42,11 @@ class Base():
         if 'num' in dct:
             for unit in dct['num']:
                 u = units[unit]
-                num *= u.mult
+                num *= u.value
         if 'den' in dct:
             for unit in dct['den']:
                 u = units[unit]
-                den *= u.mult
+                den *= u.value
         return num/den
     
     def make_type_spec(self, type_num, type_den):
@@ -65,16 +65,16 @@ class Base():
     def _make_unit(self, units, unit_type, abbr, v):
         if len(v) != 3:
             raise ValueError('Unit ' + abbr + ' incorrectly specified.')
-        mult, base, name = v
+        value, base, name = v
         if isinstance(base, dict):
             m = self._derive_m(units, base)
         elif isinstance(base, str):
             u_base = self.units[base]
-            m = u_base.mult
+            m = u_base.value
             assert u_base.unit_type == unit_type
         elif isinstance(base, (int, float)):
             m = base
-        u = Unit(abbr, mult * m, unit_type, name)
+        u = Unit(abbr, value * m, unit_type, name)
         self.safe_set(units, abbr, u)
     
     def _make_type_dct(self, dct):

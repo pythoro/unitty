@@ -6,5 +6,8 @@ metric:
     pressure: [Pa, kPa, MPa, GPa]
     energy: [J]
     density: [kgm3]
+    time: [us, ms, s]
+    speed: [mps]
+    power: [W, kW]
 imperial:
     length: [in, [3, ft]]

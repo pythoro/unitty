@@ -57,11 +57,11 @@ class System():
             for abbr in units_raw:
                 if isinstance(abbr, list):
                     unit = base[abbr[1]]
-                    mults.append(abbr[0] * unit.mult)
+                    mults.append(abbr[0] * unit.value)
                     units.append(abbr[1])
                 else:
                     unit = base[abbr]
-                    mults.append(unit.mult)
+                    mults.append(unit.value)
                     units.append(abbr)
             mults.reverse()
             units.reverse()
@@ -69,6 +69,8 @@ class System():
         return d
     
     def unitise(self, val, unit_type):
+        if unit_type is None:
+            return val, None
         try:
             d = self._sys_dct[unit_type]
         except KeyError:

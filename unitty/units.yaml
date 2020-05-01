@@ -33,6 +33,15 @@ volume:
     # Imperial
     in3: [1.6387063998585427e-05, m3, cubic inches]
     ft3: [0.028316846592, m3, cubic feet]
+time:
+    _base: [s, 1.0, second]
+    # Metric
+    ms: [1e-3, s, millisecond]
+    us: [1e-6, s, microsecond]
+    min: [60, s, minute]
+    hour: [60, min, hour]
+    day: [24, hour, day]
+    yr: [365, day, year]
 mass:
     _base: [kg, 1.0, kilogram]
     # Metric
@@ -42,10 +51,15 @@ mass:
     # Imperial
     lbs: [0.45359237, kg, pound mass]
     ton: [2240, lbs, ton]
-energy:
+energy: # and torque
     _base: [J, 1.0, joule]
     # Metric
+    Nm: [1, J, newton meter]
     kJ: [1e3, J, kilojoule]
+power:
+    _base: [W, 1.0, watt]
+    # Metric
+    kW: [1e3, W, kilowatt]
 force:
     _base: [N, 1.0, newton]
     # Metric
@@ -74,3 +88,8 @@ density:
     gm3: [1.0, {num: [g], den: [m3]}, grams per cubic meter]
     # Imperial
     pcf: [16.01846337396, kgm3, pounds mass per cubic foot]
+speed:
+    _base: [mps, 1.0, meters per second]
+    # Imperial
+    kph: [1.0, {num: [km], den: [hour]}, kilometers per hour]
+    mph: [1.0, {num: [mi], den: [hour]}, kilometers per hour]
