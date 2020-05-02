@@ -30,10 +30,13 @@ class Unit(Quantity):
     def __repr__(self):
         return self.__str__()
 
-    def __rmatmul__(self, other):
-        return other * self.value
+    def __rlshift__(self, other):
+        if not isinstance(other, Quantity):
+            raise ValueError('Quantity not recognised.')
+        other.set_unit(self)
 
     def __rrshift__(self, other):
         return other / self.value
     
-
+    def __rmatmul__(self, other):
+        return Quantity(self.value * other, unit_type=self.unit_type)
