@@ -8,7 +8,7 @@ Created on Fri May  1 11:20:07 2020
 import os
 import ruamel.yaml as yaml
 
-from .base import base
+from . import base
 
 root = os.path.dirname(os.path.abspath(__file__))
 
@@ -56,11 +56,11 @@ class System():
             units = []
             for abbr in units_raw:
                 if isinstance(abbr, list):
-                    unit = base[abbr[1]]
+                    unit = base.units[abbr[1]]
                     mults.append(abbr[0] * unit.value)
                     units.append(abbr[1])
                 else:
-                    unit = base[abbr]
+                    unit = base.units[abbr]
                     mults.append(unit.value)
                     units.append(abbr)
             mults.reverse()

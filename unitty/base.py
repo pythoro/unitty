@@ -7,19 +7,61 @@ Created on Thu Apr 30 18:15:23 2020
 
 import os
 import ruamel.yaml as yaml
+import numpy as np
 
 from .unit import Unit
 
 root = os.path.dirname(os.path.abspath(__file__))
 
 
-class Base():
+LENGTH = 0
+TIME = 1
+TEMPERATURE = 2
+MASS = 3
+CURRENT = 4
+SUBSTANCE = 5
+LUMINOSITY = 6
+MONEY = 7
+
+
+class Units():
     def __init__(self, fname=None):
         self.load(fname)
+    
+    def new(self, abbr, value, unit_vec, unit_type, name):
+        if abbr in self.units:
+            raise KeyError(abbr + ' is already defined.')
+        else:
+            u = Unit(abbr, value, unit_vec, unit_type, name)
+        self.safe_set(self.units, abbr, u)
+        
+        # Now make the corresponding inverse ('negative') unit
+        if unit_type is not None:
+            ut = ['-' + ut for ut in unit_type]
+        else:
+            ut = None
+        uneg = Unit(abbr, 1/value, -unit_vec, ut, name)
+        self.safe_set(self.units, '-' + abbr, uneg)
+        return u
+    
+    def _make_bases(self):
+        def vec(ind):
+            a = np.zeros(8)
+            a[ind] = 1
+            return a
+        self.new('length', 1.0, vec(LENGTH), None, 'length')
+        self.new('time', 1.0, vec(TIME), None, 'time')
+        self.new('temperature', 1.0, vec(TEMPERATURE), None, 'temperature')
+        self.new('mass', 1.0, vec(MASS), None, 'mass')
+        self.new('current', 1.0, vec(CURRENT), None, 'current')
+        self.new('substance', 1.0, vec(SUBSTANCE), None, 'substance')
+        self.new('luminosity', 1.0, vec(LUMINOSITY), None, 'luminosity')
+        self.new('money', 1.0, vec(MONEY), None, 'money')
     
     def load(self, fname=None):
         self.units = {}
         self.bases = {}
+        self._make_bases()
         raw = self._load_raw(fname)
         self._make_type_dct(raw)
     
@@ -36,61 +78,34 @@ class Base():
         else:
             unit_dct[key] = val
         
-    def _derive_m(self, units, dct):
-        num = 1.0
-        den = 1.0
-        if 'num' in dct:
-            for unit in dct['num']:
-                u = units[unit]
-                num *= u.value
-        if 'den' in dct:
-            for unit in dct['den']:
-                u = units[unit]
-                den *= u.value
-        return num/den
-    
-    def make_type_spec(self, type_num, type_den):
-        if len(type_num) == 0:
-            num = '1'
-        else:
-            num = ' * '.join(type_num)
-        if len(type_den) == 0:
-            return num
-        elif len(type_den) == 1:
-            den = ' * '.join(type_den)
-        else:
-            den = '(' + ' * '.join(type_den) + ')'            
-        return num + ' / ' + den
-    
+    def _derive(self, unit_type):
+        us = [self[u] for u in unit_type]
+        unit_vec = np.sum([u.unit_vec for u in us], axis=0)
+        value = np.prod([u.value for u in us])
+        return value, unit_vec
+        
     def _make_unit(self, units, unit_type, abbr, v):
-        if len(v) != 3:
-            raise ValueError('Unit ' + abbr + ' incorrectly specified.')
-        value, base, name = v
-        if isinstance(base, dict):
-            m = self._derive_m(units, base)
-        elif isinstance(base, str):
-            u_base = self.units[base]
-            m = u_base.value
-            assert u_base.unit_type == unit_type
-        elif isinstance(base, (int, float)):
-            m = base
-        u = Unit(abbr, value * m, unit_type, name)
-        self.safe_set(units, abbr, u)
+        value, derivation, name = v
+        if not isinstance(derivation, list):
+            derivation = [derivation]
+        m, unit_vec = self._derive(derivation)
+        self.new(abbr, value * m, unit_vec, derivation, name)
     
     def _make_type_dct(self, dct):
         units = self.units
         for unit_type, d in dct.items():
             for abbr, v in d.items():
+                print(abbr)
                 if abbr == '_base':
-                    base_abbr = v[0]
+                    base_abbr = v
                     self.bases[unit_type] = base_abbr
-                    v[0] = 1.0
-                    self._make_unit(units, unit_type, base_abbr, v)
                 else:
                     self._make_unit(units, unit_type, abbr, v)
 
     def __getitem__(self, abbr):
-        return self.units[abbr]
+        if abbr in self.units:
+            return self.units[abbr]
+        raise KeyError(abbr + ' not defined')
 
     def __getattr__(self, abbr):
         if abbr not in ['units', 'bases'] and abbr in self.units:
@@ -100,8 +115,7 @@ class Base():
     
     
 
-base = Base()
-units = base
+units = Units()
 
 
         

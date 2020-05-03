@@ -1,5 +1,6 @@
 length:
-    _base: [m, 1.0, meter]
+    _base: m
+    m: [1.0, length, meter]
     # Metric
     cm: [1e-2, m, centimeter]
     mm: [1e-3, m, millimeter]
@@ -15,17 +16,19 @@ length:
     th: [1e-3, in, thou]
     mil: [1e-3, in, mil]
 area:
-    _base: [m2, {num: [m, m]}, square meter]
+    _base: m2
     # Metric
-    mm2: [1.0, {num: [mm, mm]}, square millimeters]
-    cm2: [1.0, {num: [cm, cm]}, square centimeters]
-    km2: [1.0, {num: [km, km]}, square kilometers]
+    m2: [1.0, [m, m], square meter]
+    mm2: [1.0, [mm, mm], square millimeters]
+    cm2: [1.0, [cm, cm], square centimeters]
+    km2: [1.0, [km, km], square kilometers]
     # Imperial
-    in2: [1.0, {num: [in, in]}, square inches]
-    ft2: [1.0, {num: [ft, ft]}, square feet]
-    mi2: [1.0, {num: [mi, mi]}, square miles]
+    in2: [1.0, [in, in], square inches]
+    ft2: [1.0, [ft, ft], square feet]
+    mi2: [1.0, [mi, mi], square miles]
 volume:
-    _base: [m3, {num: [m, m, m]}, cubic meter]
+    _base: m3
+    m3: [1.0, [m, m, m], cubic meter]
     # Metric
     L: [1e-3, m3, liter]
     mL: [1e-3, L, milliliter]
@@ -34,8 +37,9 @@ volume:
     in3: [1.6387063998585427e-05, m3, cubic inches]
     ft3: [0.028316846592, m3, cubic feet]
 time:
-    _base: [s, 1.0, second]
+    _base: s
     # Metric
+    s: [1.0, time, second]
     ms: [1e-3, s, millisecond]
     us: [1e-6, s, microsecond]
     min: [60, s, minute]
@@ -43,34 +47,39 @@ time:
     day: [24, hour, day]
     yr: [365, day, year]
 mass:
-    _base: [kg, 1.0, kilogram]
+    _base: kg
     # Metric
+    kg: [1.0, mass, kilogram]
     g: [1e-3, kg, gram]
     mg: [1e-6, kg, milligram]
     tonne: [1e3, kg, tonne]
     # Imperial
     lbs: [0.45359237, kg, pound mass]
     ton: [2240, lbs, ton]
-energy: # and torque
-    _base: [J, 1.0, joule]
-    # Metric
-    Nm: [1, J, newton meter]
-    kJ: [1e3, J, kilojoule]
-power:
-    _base: [W, 1.0, watt]
-    # Metric
-    kW: [1e3, W, kilowatt]
 force:
-    _base: [N, 1.0, newton]
+    _base: N
     # Metric
+    N: [1.0, [kg, m, -s, -s], newton]
     mN: [1e-3, N, millinewton]
     kN: [1e3, N, kilonewton]
     # Imperial
     lbf: [4.4482216152605, N, pounds force]
     kip: [4448.2216, N, kip]
-pressure:
-    _base: [Pa, 1.0, pascal]
+energy: # and torque
+    _base: J
     # Metric
+    J: [1.0, [N, m], joule]
+    Nm: [1.0, [N, m], newton meter]
+    kJ: [1e3, J, kilojoule]
+power:
+    _base: W
+    # Metric
+    W: [1.0, [J, -s], watt]
+    kW: [1e3, W, kilowatt]
+pressure:
+    _base: Pa
+    # Metric
+    Pa: [1.0, [N, -m, -m], pascal]
     hPa: [1e2, Pa, hectopascal]
     kPa: [1e3, Pa, kilopascal]
     MPa: [1e6, Pa, megapascal]
@@ -83,13 +92,15 @@ pressure:
     ksi: [68947.5728, Pa, kilopounds per square inch]
     psf: [47.880208, Pa, pounds force per square foot]
 density:
-    _base: [kgm3, 1.0, kilograms per cubic meter]
+    _base: kgm3
     # Metric
-    gm3: [1.0, {num: [g], den: [m3]}, grams per cubic meter]
+    kgm3: [1.0, [kg, -m, -m, -m], kilograms per cubic meter]
+    gm3: [1.0, [g, -m, -m, -m], grams per cubic meter]
     # Imperial
     pcf: [16.01846337396, kgm3, pounds mass per cubic foot]
 speed:
-    _base: [mps, 1.0, meters per second]
+    _base: mps
     # Imperial
-    kph: [1.0, {num: [km], den: [hour]}, kilometers per hour]
-    mph: [1.0, {num: [mi], den: [hour]}, kilometers per hour]
+    mps: [1.0, [m, -s], meters per second]
+    kph: [1.0, [km, -hour], kilometers per hour]
+    mph: [1.0, [mi, hour], kilometers per hour]
