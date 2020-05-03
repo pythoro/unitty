@@ -23,6 +23,8 @@ SUBSTANCE = 5
 LUMINOSITY = 6
 MONEY = 7
 
+DIMENSIONS = ['length', 'time', 'temperature', 'mass', 'current', 'substance',
+              'luminosity', 'money']
 
 class Units():
     def __init__(self, fname=None):

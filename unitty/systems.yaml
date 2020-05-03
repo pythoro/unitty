@@ -2,7 +2,7 @@ metric:
     length: [um, mm, m, km]
     area: [mm2, cm2, m2, km2]
     volume: [mL, L, m3]
-    mass: [mg, g, kg, ton]
+    mass: [mg, g, kg, tonne]
     pressure: [Pa, kPa, MPa, GPa]
     energy: [J]
     density: [kgm3]

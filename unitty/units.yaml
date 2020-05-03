@@ -103,4 +103,4 @@ speed:
     # Imperial
     mps: [1.0, [m, -s], meters per second]
     kph: [1.0, [km, -hour], kilometers per hour]
-    mph: [1.0, [mi, hour], kilometers per hour]
+    mph: [1.0, [mi, -hour], miles per hour]

@@ -41,8 +41,11 @@ class Systems():
     def active(self):
         return self._sys_dct[self._active]
         
-    def unitise(self, val, unit_type):
-        return self._sys_dct[self._active].unitise(val, unit_type)
+    def unitise(self, val, unit_vec, in_base=False):
+        return self._sys_dct[self._active].unitise(val, unit_vec, in_base)
+
+    def unitise_typed(self, val, unit_type):
+        return self._sys_dct[self._active].unitise_typed(val, unit_type)
 
 
 class System():
@@ -52,60 +55,77 @@ class System():
     def _make_sys_dct(self, dct):
         d = {}
         for unit_type, units_raw in dct.items():
-            mults = []
-            units = []
+            unit_dct = {}
+            units_raw.reverse()
             for abbr in units_raw:
                 if isinstance(abbr, list):
                     unit = base.units[abbr[1]]
-                    mults.append(abbr[0] * unit.value)
-                    units.append(abbr[1])
+                    mult = abbr[0] * unit.value
+                    a = unit.abbr
                 else:
                     unit = base.units[abbr]
-                    mults.append(unit.value)
-                    units.append(abbr)
-            mults.reverse()
-            units.reverse()
-            d[unit_type] = {'units': units, 'mults': mults}
+                    mult = unit.value
+                    a = abbr
+                unit_dct[a] = mult
+            d[unit_type] = unit_dct
         return d
     
-    def unitise(self, val, unit_type):
-        if isinstance(unit_type, dict):
-            return self.unitise_compound(val, unit_type)
-        if unit_type is None:
-            return val, None
-        try:
-            d = self._sys_dct[unit_type]
-        except KeyError:
-            raise KeyError('unit type "' + unit_type + '" not recognised.')
-        for (unit, mult) in zip(d['units'], d['mults']):
+    def calc_base_unit_type(self, unit_vec):
+        unit_type = []
+        for n, name in zip(unit_vec, base.DIMENSIONS):
+            name = '-' + name if n < 0 else name
+            unit_type.extend([name]*int(abs(n)))
+        return unit_type
+
+    def _unitise_one(self, val, unit_type):
+        div = False
+        if unit_type.startswith('-'):
+            div = True
+            unit_type = unit_type[1:]
+        d = self._sys_dct[unit_type]
+        for abbr, mult in d.items():
             if val >= mult:
                 break
-        return val / mult, unit
-    
-    def unitise_compound(self, val, unit_type):
-        num = unit_type['num']
-        den = unit_type['den']
-        str_num = []
-        str_den = []
-        new_val = val
-        for ut in num:
-            new_val, unit_str = self.unitise(new_val, ut)
-            str_num.append(unit_str)
-        for ut in den:
-            if new_val < 1e-3 or new_val > 1e3:
-                new_val, unit_str = self.unitise(new_val, ut)
-            else:
-                _, unit_str = self.unitise(1, ut)
-            str_den.append(unit_str)
-        if len(den) == 0:
-            str_out = '.'.join(str_num)
-        elif len(den) == 1:
-            str_out = '.'.join(str_num) + '/' + str_den[0]
-        else:
-            str_out = '.'.join(str_num) + '/(' + '.'.join(str_den) + ')'
-        return new_val, str_out
-        
+        if div:
+            return val * mult, '-' + abbr
+        return val / mult, abbr
 
+    def _base_unitise_one(self, val, unit_type):
+        div = False
+        if unit_type.startswith('-'):
+            div = True
+            unit_type = unit_type[1:]
+        b = base.units.bases[unit_type]
+        u = base.units[b]
+        a = u.abbr
+        if div:
+            return val * u.value, '-' + u.abbr
+        return val / u.value, u.abbr
+    
+    def unitise(self, val, unit_vec, in_base=False):
+        base_unit_type = self.calc_base_unit_type(unit_vec)
+        new_val = val
+        unit_type = []
+        for u in base_unit_type:
+            if in_base:
+                new_val, ut = self._base_unitise_one(new_val, u)
+            else:
+                new_val, ut = self._unitise_one(new_val, u)
+            unit_type.append(ut)
+        return new_val, unit_type
+    
+    def unitise_typed(self, val, unit_type):
+        out = val
+        for u in unit_type:
+            div = False
+            if u.startswith('-'):
+                div = True
+            if div:
+                out /= base.units[u].value
+            else:
+                out *= base.units[u].value
+        return out
+    
 
 systems = Systems()        
 active = systems.active
