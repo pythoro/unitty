@@ -11,23 +11,18 @@ def set_systems(sys):
     global systems
     systems = sys
 
+units = None
 
-def invert_type(lst):
-    out = []
-    for item in lst:
-        if item.startswith('-'):
-            out.append(item[1:])
-        else:
-            out.append('-' + item)
-    return out
+def set_units(u):
+    global units
+    units = u
 
 
 class Quantity():
-    def __init__(self, value, unit_type, unit_vec, base_type):
+    def __init__(self, value, unit_type, unit_vec):
         self.value = value
         self.unit_type = unit_type
         self.unit_vec = unit_vec
-        self.base_type = base_type
         
     def set_unit(self, unit):
         if unit.unit_vec != self.unit_vec:
@@ -39,8 +34,10 @@ class Quantity():
             return 'base'
         elif len(unit_type)==0:
             return 'dimensionless'
-        num = [ut for ut in unit_type if not ut.startswith('-')]
-        den = [ut[1:] for ut in unit_type if ut.startswith('-')]
+        num = [i for i in unit_type if i > 0]
+        den = [-i for i in unit_type if i < 0]
+        num = [units._num_dct[i] for i in num]
+        den = [units._num_dct[-i] for i in den]
         s_num = '1' if len(num) == 0 else '.'.join(num)
         n = len(den)
         if n == 0:
@@ -61,10 +58,10 @@ class Quantity():
         return value, unit_type
 
     def unitise(self):
-        return systems.unitise(self.value, self.base_type)
+        return systems.unitise(self.value, self.unit_type)
 
     def base_unitise(self):
-        return systems.unitise(self.value, self.unit_vec)
+        return systems.base_unitise(self.value, self.unit_vec)
     
     def __str__(self):
         value, unit_type = self.in_units()
@@ -78,7 +75,7 @@ class Quantity():
         if isinstance(other, Quantity):
             return self._mul(other)
         return Quantity(self.value * other, unit_type=self.unit_type,
-                        unit_vec=self.unit_vec, base_type=self.base_type)
+                        unit_vec=self.unit_vec)
 
     def __pow__(self, other, modulo=None):
         if not isinstance(other, int):
@@ -89,36 +86,33 @@ class Quantity():
         if isinstance(other, Quantity):
             return self._div(other)
         return Quantity(self.value / other, unit_type=self.unit_type,
-                        unit_vec=self.unit_vec, base_type=self.base_type)
+                        unit_vec=self.unit_vec)
 
     def __rmul__(self, other):
         if isinstance(other, Quantity):
             return self._mul(other)
         return Quantity(self.value * other, unit_type=self.unit_type,
-                        unit_vec=self.unit_vec, base_type=self.base_type)
+                        unit_vec=self.unit_vec)
 
 
     def __rtruediv__(self, other):
         if isinstance(other, Quantity):
             return self._div(other)
         return Quantity(other / self.value,
-                        unit_type=invert_type(self.unit_type),
-                        unit_vec=-self.unit_vec,
-                        base_type=invert_type(self.base_type))
+                        unit_type=[-u for u in self.unit_type],
+                        unit_vec=-self.unit_vec)
     
     def _mul(self, other):
         unit_type = self.unit_type.extend(other.unit_type)
-        base_type = self.base_type.extend(other.base_type)
         unit_vec = self.unit_vec + other.unit_vec
         return Quantity(self.value * other.value, unit_type=unit_type,
-                        unit_vec=unit_vec, base_type=base_type)
+                        unit_vec=unit_vec)
 
     def _div(self, other):
-        unit_type = self.unit_type.extend(invert_type(other.unit_type))
-        base_type = self.base_type.extend(invert_type(other.base_type))
+        unit_type = self.unit_type.extend([-u for u in other.unit_type])
         unit_vec = self.unit_vec - other.unit_vec
         return Quantity(self.value / other.value, unit_type=unit_type,
-                        unit_vec=unit_vec, base_type=base_type)
+                        unit_vec=unit_vec)
 
 
     def _pow(self, other):

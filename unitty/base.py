@@ -18,22 +18,34 @@ class Units():
     def __init__(self, fname=None):
         self.load(fname)
     
+    def _str_to_i(self, s):
+        if s in self._str_to_i_dct:
+            return self._str_to_i_dct[s]
+        index = len(self._num_dct) + 1
+        self._num_dct[index] = s
+        self._str_to_i_dct[s] = index
+        self._num_dct[-index] = '-' + s
+        self._str_to_i_dct['-' + s] = -index
+        return index
+        
+    def _add_base_type(self, i, base_type):
+        self._add_base_type[i] = base_type
+    
     def new(self, abbr, value, unit_vec, unit_type, name, base_type):
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
-        else:
-            u = Unit(abbr, value, unit_vec, unit_type, name, base_type)
+        unit_type = [self._str_to_i(u) for u in unit_type]
+        index = self._str_to_i(abbr)
+        index_base = [self._str_to_i(b) for b in base_type]
+        self._base_types[index] = index_base
+        u = Unit(abbr, value, unit_vec, unit_type, name)
         self.safe_set(self.units, abbr, u)
-        
         # Now make the corresponding inverse ('negative') unit
-        if unit_type is not None:
-            ut = ['-' + ut for ut in unit_type]
-            bt = ['-' + bt for bt in base_type]
-        else:
-            ut = None
-            bt = base_type
-        uneg = Unit(abbr, 1/value, -unit_vec, ut, name, bt)
+        ut = [-u for u in unit_type]
+        uneg = Unit(abbr, 1/value, -unit_vec, ut, name)
         self.safe_set(self.units, '-' + abbr, uneg)
+        index = self._str_to_i('-' + abbr)
+        self._base_types[index] = [-b for b in index_base]
         return u
     
     def _make_base_types(self, types):
@@ -46,8 +58,11 @@ class Units():
             self.new(t, 1.0, vec(i), [t], t, [t])
     
     def load(self, fname=None):
-        self.units = {}
-        self.bases = {}
+        self.units = {} # The unit instances
+        self.bases = {} # The base units for time, length, etc
+        self._base_types = {} # the length, time for given id
+        self._num_dct = {} # The attr for given index
+        self._str_to_i_dct = {} # the index for given attr
         raw = self._load_raw(fname)
         self._make_type_dct(raw)
     
@@ -86,14 +101,14 @@ class Units():
             for abbr, v in d.items():
                 if abbr == '_base':
                     base_abbr = v
-                    self.bases[unit_type] = base_abbr
+                    self.bases[self._str_to_i(unit_type)] = self._str_to_i(base_abbr)
                 else:
                     self._make_unit(units, unit_type, abbr, v)
 
     def __getitem__(self, abbr):
         if abbr in self.units:
             return self.units[abbr]
-        raise KeyError(abbr + ' not defined')
+        raise KeyError(str(abbr) + ' not defined')
 
     def __getattr__(self, abbr):
         if abbr not in ['units', 'bases'] and abbr in self.units:
@@ -101,7 +116,8 @@ class Units():
         else:
             return self.__getattribute__(abbr)
     
-    
+    def get_by_index(self, i):
+        return self.units[self._num_dct[i]]
 
 units = Units()
 

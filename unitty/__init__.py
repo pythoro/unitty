@@ -11,8 +11,9 @@ from . import quantity
 from . import unit
 
 def init():
-    global initialised
+    global initialised, base
     quantity.set_systems(system.systems)
+    quantity.set_units(base.units)
     initialised = True
     
 init()

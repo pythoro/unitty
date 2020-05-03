@@ -64,56 +64,57 @@ class System():
                 if isinstance(abbr, list):
                     unit = base.units[abbr[1]]
                     mult = abbr[0] * unit.value
-                    a = unit.abbr
+                    a = base.units._str_to_i(unit.abbr)
                 else:
                     unit = base.units[abbr]
                     mult = unit.value
-                    a = abbr
+                    a = base.units._str_to_i(abbr)
                 unit_dct[a] = mult
-            d[unit_type] = unit_dct
+            d[base.units._str_to_i(unit_type)] = unit_dct
         return d
     
     def calc_base_unit_type(self, unit_vec):
         unit_type = []
         for n, name in zip(unit_vec, base.units.base_types):
-            name = '-' + name if n < 0 else name
-            unit_type.extend([name]*int(abs(n)))
+            i = base.units._str_to_i(name)
+            unit_type.extend([i]*int(abs(n)))
         return unit_type
 
     def _unitise_one(self, val, unit_type):
         div = False
-        if unit_type.startswith('-'):
+        if unit_type < 0:
+            unit_type = -unit_type
             div = True
-            unit_type = unit_type[1:]
         if unit_type not in self._sys_dct:
             return val, unit_type
         d = self._sys_dct[unit_type]
-        for abbr, mult in d.items():
+        for i, mult in d.items():
             if val >= mult:
                 break
         if div:
-            return val * mult, '-' + abbr
-        return val / mult, abbr
+            return val * mult, -i
+        return val / mult, i
 
     def _base_unitise_one(self, val, unit_type):
         div = False
-        if unit_type.startswith('-'):
+        if unit_type < 0:
             div = True
-            unit_type = unit_type[1:]
-        b = base.units.bases[unit_type]
-        u = base.units[b]
-        a = u.abbr
+        base_type_i = base.units._base_types[unit_type][0] # length, force, etc
+        b = base.units.bases[base_type_i] # m, N etc
+        u = base.units.get_by_index(b)
         if div:
-            return val * u.value, '-' + u.abbr
-        return val / u.value, u.abbr
+            return val * u.value, -b
+        return val / u.value, b
     
-    def unitise(self, val, base_type):
+    def unitise(self, val, unit_type):
         new_val = val
-        unit_type = []
+        out_unit_type = []
+        base_types = base.units._base_types
+        base_type = [t for bt in unit_type for t in base_types[bt]]
         for u in base_type:
             new_val, ut = self._unitise_one(new_val, u)
-            unit_type.append(ut)
-        return new_val, unit_type
+            out_unit_type.append(ut)
+        return new_val, out_unit_type
     
     def base_unitise(self, val, unit_vec):
         base_unit_type = self.calc_base_unit_type(unit_vec)
@@ -128,12 +129,12 @@ class System():
         out = val
         for u in unit_type:
             div = False
-            if u.startswith('-'):
+            if u < 0:
                 div = True
             if div:
-                out /= base.units[u].value
+                out /= base.units.get_by_index(u).value
             else:
-                out *= base.units[u].value
+                out *= base.units.get_by_index(u).value
         return out
     
 
