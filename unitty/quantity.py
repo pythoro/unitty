@@ -12,6 +12,14 @@ def set_systems(sys):
     systems = sys
 
 
+def invert_type(lst):
+    out = []
+    for item in lst:
+        if item.startswith('-'):
+            out.append(item[1:])
+        else:
+            out.append('-' + item)
+    return out
 
 
 class Quantity():
@@ -69,8 +77,8 @@ class Quantity():
     def __mul__(self, other):
         if isinstance(other, Quantity):
             return self._mul(other)
-        return Quantity(self.value * other, unit_type=[self.abbr],
-                        unit_vec=self.unit_vec)
+        return Quantity(self.value * other, unit_type=self.unit_type,
+                        unit_vec=self.unit_vec, base_type=self.base_type)
 
     def __pow__(self, other, modulo=None):
         if not isinstance(other, int):
@@ -80,36 +88,37 @@ class Quantity():
     def __truediv__(self, other):
         if isinstance(other, Quantity):
             return self._div(other)
-        return Quantity(self.value / other, unit_type=[self.abbr],
-                        unit_vec=self.unit_vec)
+        return Quantity(self.value / other, unit_type=self.unit_type,
+                        unit_vec=self.unit_vec, base_type=self.base_type)
 
     def __rmul__(self, other):
         if isinstance(other, Quantity):
             return self._mul(other)
-        return Quantity(self.value * other, unit_type=[self.abbr],
-                        unit_vec=self.unit_vec)
+        return Quantity(self.value * other, unit_type=self.unit_type,
+                        unit_vec=self.unit_vec, base_type=self.base_type)
 
 
     def __rtruediv__(self, other):
         if isinstance(other, Quantity):
             return self._div(other)
-        ut = ['-' + u for u in self.unit_type]
-        return Quantity(other / self.value, unit_type=ut,
-                        unit_vec=-self.unit_vec)
+        return Quantity(other / self.value,
+                        unit_type=invert_type(self.unit_type),
+                        unit_vec=-self.unit_vec,
+                        base_type=invert_type(self.base_type))
     
     def _mul(self, other):
-        unit_type = [self.abbr]
-        unit_type.append(other.abbr)
+        unit_type = self.unit_type.extend(other.unit_type)
+        base_type = self.base_type.extend(other.base_type)
         unit_vec = self.unit_vec + other.unit_vec
         return Quantity(self.value * other.value, unit_type=unit_type,
-                        unit_vec=unit_vec)
+                        unit_vec=unit_vec, base_type=base_type)
 
     def _div(self, other):
-        unit_type = [self.abbr]
-        unit_type.append('-' + other.abbr)
+        unit_type = self.unit_type.extend(invert_type(other.unit_type))
+        base_type = self.base_type.extend(invert_type(other.base_type))
         unit_vec = self.unit_vec - other.unit_vec
         return Quantity(self.value / other.value, unit_type=unit_type,
-                        unit_vec=unit_vec)
+                        unit_vec=unit_vec, base_type=base_type)
 
 
     def _pow(self, other):

@@ -43,7 +43,7 @@ class Units():
             a[ind] = 1
             return a
         for i, t in enumerate(types):
-            self.new(t, 1.0, vec(i), None, t, [t])
+            self.new(t, 1.0, vec(i), [t], t, [t])
     
     def load(self, fname=None):
         self.units = {}
@@ -75,7 +75,7 @@ class Units():
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, unit_vec = self._derive(derivation)
-        self.new(abbr, value * m, unit_vec, derivation, name, [unit_type])
+        self.new(abbr, value * m, unit_vec, [abbr], name, [unit_type])
     
     def _make_type_dct(self, dct):
         units = self.units
