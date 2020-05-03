@@ -41,8 +41,11 @@ class Systems():
     def active(self):
         return self._sys_dct[self._active]
         
-    def unitise(self, val, unit_vec, in_base=False):
-        return self._sys_dct[self._active].unitise(val, unit_vec, in_base)
+    def unitise(self, val, base_type):
+        return self._sys_dct[self._active].unitise(val, base_type)
+
+    def base_unitise(self, val, type_vec):
+        return self._sys_dct[self._active].base_unitise(val, type_vec)
 
     def unitise_typed(self, val, unit_type):
         return self._sys_dct[self._active].unitise_typed(val, unit_type)
@@ -82,6 +85,8 @@ class System():
         if unit_type.startswith('-'):
             div = True
             unit_type = unit_type[1:]
+        if unit_type not in self._sys_dct:
+            return val, unit_type
         d = self._sys_dct[unit_type]
         for abbr, mult in d.items():
             if val >= mult:
@@ -102,15 +107,20 @@ class System():
             return val * u.value, '-' + u.abbr
         return val / u.value, u.abbr
     
-    def unitise(self, val, unit_vec, in_base=False):
+    def unitise(self, val, base_type):
+        new_val = val
+        unit_type = []
+        for u in base_type:
+            new_val, ut = self._unitise_one(new_val, u)
+            unit_type.append(ut)
+        return new_val, unit_type
+    
+    def base_unitise(self, val, unit_vec):
         base_unit_type = self.calc_base_unit_type(unit_vec)
         new_val = val
         unit_type = []
         for u in base_unit_type:
-            if in_base:
-                new_val, ut = self._base_unitise_one(new_val, u)
-            else:
-                new_val, ut = self._unitise_one(new_val, u)
+            new_val, ut = self._base_unitise_one(new_val, u)
             unit_type.append(ut)
         return new_val, unit_type
     

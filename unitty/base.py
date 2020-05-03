@@ -28,10 +28,10 @@ class Units():
         # Now make the corresponding inverse ('negative') unit
         if unit_type is not None:
             ut = ['-' + ut for ut in unit_type]
-            bt = '-' + base_type
+            bt = ['-' + bt for bt in base_type]
         else:
             ut = None
-            bt = None
+            bt = base_type
         uneg = Unit(abbr, 1/value, -unit_vec, ut, name, bt)
         self.safe_set(self.units, '-' + abbr, uneg)
         return u
@@ -43,7 +43,7 @@ class Units():
             a[ind] = 1
             return a
         for i, t in enumerate(types):
-            self.new(t, 1.0, vec(i), None, t, t)
+            self.new(t, 1.0, vec(i), None, t, [t])
     
     def load(self, fname=None):
         self.units = {}
@@ -75,7 +75,7 @@ class Units():
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, unit_vec = self._derive(derivation)
-        self.new(abbr, value * m, unit_vec, derivation, name, unit_type)
+        self.new(abbr, value * m, unit_vec, derivation, name, [unit_type])
     
     def _make_type_dct(self, dct):
         units = self.units

@@ -15,10 +15,11 @@ def set_systems(sys):
 
 
 class Quantity():
-    def __init__(self, value, unit_type, unit_vec):
+    def __init__(self, value, unit_type, unit_vec, base_type):
         self.value = value
         self.unit_type = unit_type
         self.unit_vec = unit_vec
+        self.base_type = base_type
         
     def set_unit(self, unit):
         if unit.unit_vec != self.unit_vec:
@@ -52,10 +53,10 @@ class Quantity():
         return value, unit_type
 
     def unitise(self):
-        return systems.unitise(self.value, self.unit_vec, in_base=False)
+        return systems.unitise(self.value, self.base_type)
 
-    def in_base(self):
-        return systems.unitise(self.value, self.unit_vec, in_base=True)
+    def base_unitise(self):
+        return systems.unitise(self.value, self.unit_vec)
     
     def __str__(self):
         value, unit_type = self.in_units()

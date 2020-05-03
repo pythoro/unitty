@@ -17,8 +17,9 @@ class Unit(Quantity):
         self.base_type = base_type
         
     def __str__(self):
-        return (self.abbr + ' ({:0.3g}'.format(self.value) 
-                    + ' ' + self._str_unit_type(self.unit_type) + ')')
+        value, unit_type = self.unitise()
+        return (self.abbr + ' ({:0.3g}'.format(value) 
+                    + ' ' + self._str_unit_type(unit_type) + ')')
 
     def __repr__(self):
         return self.__str__()
