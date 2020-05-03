@@ -10,5 +10,6 @@ metric:
     speed: [mps]
     power: [W, kW]
     force: [mN, N, kN]
+    temperature: [K]
 imperial:
     length: [in, [3, ft]]

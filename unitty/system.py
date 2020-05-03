@@ -72,7 +72,7 @@ class System():
     
     def calc_base_unit_type(self, unit_vec):
         unit_type = []
-        for n, name in zip(unit_vec, base.DIMENSIONS):
+        for n, name in zip(unit_vec, base.units.base_types):
             name = '-' + name if n < 0 else name
             unit_type.extend([name]*int(abs(n)))
         return unit_type

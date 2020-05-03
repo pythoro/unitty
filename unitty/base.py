@@ -14,18 +14,6 @@ from .unit import Unit
 root = os.path.dirname(os.path.abspath(__file__))
 
 
-LENGTH = 0
-TIME = 1
-TEMPERATURE = 2
-MASS = 3
-CURRENT = 4
-SUBSTANCE = 5
-LUMINOSITY = 6
-MONEY = 7
-
-DIMENSIONS = ['length', 'time', 'temperature', 'mass', 'current', 'substance',
-              'luminosity', 'money']
-
 class Units():
     def __init__(self, fname=None):
         self.load(fname)
@@ -46,24 +34,18 @@ class Units():
         self.safe_set(self.units, '-' + abbr, uneg)
         return u
     
-    def _make_bases(self):
+    def _make_base_types(self, types):
+        self.base_types = types
         def vec(ind):
-            a = np.zeros(8)
+            a = np.zeros(len(types))
             a[ind] = 1
             return a
-        self.new('length', 1.0, vec(LENGTH), None, 'length')
-        self.new('time', 1.0, vec(TIME), None, 'time')
-        self.new('temperature', 1.0, vec(TEMPERATURE), None, 'temperature')
-        self.new('mass', 1.0, vec(MASS), None, 'mass')
-        self.new('current', 1.0, vec(CURRENT), None, 'current')
-        self.new('substance', 1.0, vec(SUBSTANCE), None, 'substance')
-        self.new('luminosity', 1.0, vec(LUMINOSITY), None, 'luminosity')
-        self.new('money', 1.0, vec(MONEY), None, 'money')
+        for i, t in enumerate(types):
+            self.new(t, 1.0, vec(i), None, t)
     
     def load(self, fname=None):
         self.units = {}
         self.bases = {}
-        self._make_bases()
         raw = self._load_raw(fname)
         self._make_type_dct(raw)
     
@@ -96,8 +78,10 @@ class Units():
     def _make_type_dct(self, dct):
         units = self.units
         for unit_type, d in dct.items():
+            if isinstance(d, list):
+                self._make_base_types(d)
+                continue
             for abbr, v in d.items():
-                print(abbr)
                 if abbr == '_base':
                     base_abbr = v
                     self.bases[unit_type] = base_abbr

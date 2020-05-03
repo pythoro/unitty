@@ -1,3 +1,12 @@
+base_types:
+    - length
+    - time
+    - temperature
+    - mass
+    - current
+    - substance
+    - luminosity
+    - money
 length:
     _base: m
     m: [1.0, length, meter]
@@ -104,3 +113,6 @@ speed:
     mps: [1.0, [m, -s], meters per second]
     kph: [1.0, [km, -hour], kilometers per hour]
     mph: [1.0, [mi, -hour], miles per hour]
+temperature:
+    _base: K
+    K: [1.0, temperature, kelvin]
