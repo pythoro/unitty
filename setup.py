@@ -18,7 +18,7 @@ setuptools.setup(
     version="0.0.1",
     author="Reuben Rusk",
     author_email="pythoro@mindquip.com",
-    description="Easy data transfer between classes.",
+    description="Change unit systems without changing code",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pythoro/fastwire.git",
