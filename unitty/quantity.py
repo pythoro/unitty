@@ -30,9 +30,12 @@ class Quantity():
         self.name = name
         
     def set_unit(self, unit):
-        if unit.vector != self.vector:
+        if any(unit.vector != self.vector):
             raise ValueError('Incompatible quantity type')
         self.spec = unit.spec
+        self.value = self.value * unit.value
+        self.abbr = unit.abbr if unit.abbr is not None else None
+        self.name = unit.name if unit.name is not None else None
                 
     def _in_units(self, unit=None):
         if unit is not None:
