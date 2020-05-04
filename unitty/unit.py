@@ -8,10 +8,10 @@ Created on Fri May  1 11:51:58 2020
 from .quantity import Quantity
 
 class Unit(Quantity):
-    def __init__(self, abbr, value, unit_vec, unit_type, name):
+    def __init__(self, abbr, value, vector, unit_type, name):
         self.abbr = abbr
         self.value = value
-        self.unit_vec = unit_vec
+        self.vector = vector
         self.unit_type = unit_type
         self.name = name
         
@@ -31,5 +31,5 @@ class Unit(Quantity):
     
     def __rmatmul__(self, other):
         return Quantity(self.value * other, unit_type=self.unit_type,
-                        unit_vec=self.unit_vec)
+                        vector=self.vector)
     

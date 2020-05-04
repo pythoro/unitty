@@ -34,18 +34,18 @@ class Units():
     def _add_base_type(self, i, base_type):
         self._add_base_type[i] = base_type
     
-    def new(self, abbr, value, unit_vec, unit_type, name, base_type):
+    def new(self, abbr, value, vector, unit_type, name, base_type):
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
         unit_type = [self._ind(u) for u in unit_type]
         index = self._ind(abbr)
         index_base = [self._ind(b) for b in base_type]
         self._base_types[index] = index_base
-        u = Unit(abbr, value, unit_vec, unit_type, name)
+        u = Unit(abbr, value, vector, unit_type, name)
         self.safe_set(self.units, abbr, u)
         # Now make the corresponding inverse ('negative') unit
         ut = [-u for u in unit_type]
-        uneg = Unit(abbr, 1/value, -unit_vec, ut, name)
+        uneg = Unit(abbr, 1/value, -vector, ut, name)
         self.safe_set(self.units, '-' + abbr, uneg)
         index = self._ind('-' + abbr)
         self._base_types[index] = [-b for b in index_base]
@@ -84,16 +84,16 @@ class Units():
         
     def _derive(self, unit_type):
         us = [self[u] for u in unit_type]
-        unit_vec = np.sum([u.unit_vec for u in us], axis=0)
+        vector = np.sum([u.vector for u in us], axis=0)
         value = np.prod([u.value for u in us])
-        return value, unit_vec
+        return value, vector
         
     def _make_unit(self, units, unit_type, abbr, v):
         value, derivation, name = v
         if not isinstance(derivation, list):
             derivation = [derivation]
-        m, unit_vec = self._derive(derivation)
-        self.new(abbr, value * m, unit_vec, [abbr], name, [unit_type])
+        m, vector = self._derive(derivation)
+        self.new(abbr, value * m, vector, [abbr], name, [unit_type])
     
     def _make_type_dct(self, dct):
         units = self.units

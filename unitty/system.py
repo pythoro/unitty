@@ -73,9 +73,9 @@ class System():
             d[base.units._ind(unit_type)] = unit_dct
         return d
     
-    def calc_base_unit_type(self, unit_vec):
+    def calc_base_unit_type(self, vector):
         unit_type = []
-        for n, name in zip(unit_vec, base.units.base_types):
+        for n, name in zip(vector, base.units.base_types):
             i = base.units._ind(name)
             if n > 0:
                 unit_type.extend([i]*int(abs(n)))
@@ -125,8 +125,8 @@ class System():
             out_unit_type.append(ut)
         return new_val, out_unit_type
     
-    def base_unitise(self, val, unit_vec):
-        base_unit_type = self.calc_base_unit_type(unit_vec)
+    def base_unitise(self, val, vector):
+        base_unit_type = self.calc_base_unit_type(vector)
         new_val = val
         unit_type = []
         for u in base_unit_type:
