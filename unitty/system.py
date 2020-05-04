@@ -47,8 +47,8 @@ class Systems():
     def base_unitise(self, val, type_vec):
         return self._sys_dct[self._active].base_unitise(val, type_vec)
 
-    def unitise_typed(self, val, unit_type):
-        return self._sys_dct[self._active].unitise_typed(val, unit_type)
+    def unitise_typed(self, val, spec):
+        return self._sys_dct[self._active].unitise_typed(val, spec)
 
 
 class System():
@@ -57,7 +57,7 @@ class System():
     
     def _make_sys_dct(self, dct):
         d = {}
-        for unit_type, units_raw in dct.items():
+        for spec, units_raw in dct.items():
             unit_dct = {}
             units_raw.reverse()
             for abbr in units_raw:
@@ -70,24 +70,24 @@ class System():
                     mult = unit.value
                     a = base.units._ind(abbr)
                 unit_dct[a] = mult
-            d[base.units._ind(unit_type)] = unit_dct
+            d[base.units._ind(spec)] = unit_dct
         return d
     
-    def calc_base_unit_type(self, vector):
-        unit_type = []
+    def calc_base_spec(self, vector):
+        spec = []
         for n, name in zip(vector, base.units.base_types):
             i = base.units._ind(name)
             if n > 0:
-                unit_type.extend([i]*int(abs(n)))
+                spec.extend([i]*int(abs(n)))
             else:
-                unit_type.extend([-i]*int(abs(n)))
-        return unit_type
+                spec.extend([-i]*int(abs(n)))
+        return spec
 
-    def _unitise_one(self, val, unit_type):
-        if abs(unit_type) not in self._sys_dct:
-            return val, unit_type
-        d = self._sys_dct[abs(unit_type)]
-        div = unit_type < 0
+    def _unitise_one(self, val, spec):
+        if abs(spec) not in self._sys_dct:
+            return val, spec
+        d = self._sys_dct[abs(spec)]
+        div = spec < 0
         trials = []
         i_vals = []
         for i, mult in d.items():
@@ -101,11 +101,11 @@ class System():
         ind = a.index(min(a))
         return trials[ind], i_vals[ind]
 
-    def _base_unitise_one(self, val, unit_type):
+    def _base_unitise_one(self, val, spec):
         div = False
-        if unit_type < 0:
+        if spec < 0:
             div = True
-        base_type_i = abs(base.units._base_types[unit_type][0]) # length, force, etc
+        base_type_i = abs(base.units._base_types[spec][0]) # length, force, etc
         if base_type_i in base.units.bases:
             b = base.units.bases[base_type_i] # m, N etc
         else:
@@ -115,28 +115,28 @@ class System():
             return val * u.value, -b
         return val / u.value, b
     
-    def unitise(self, val, unit_type):
+    def unitise(self, val, spec):
         new_val = val
-        out_unit_type = []
+        out_spec = []
         base_types = base.units._base_types
-        base_type = [t for bt in unit_type for t in base_types[bt]]
+        base_type = [t for bt in spec for t in base_types[bt]]
         for u in base_type:
             new_val, ut = self._unitise_one(new_val, u)
-            out_unit_type.append(ut)
-        return new_val, out_unit_type
+            out_spec.append(ut)
+        return new_val, out_spec
     
     def base_unitise(self, val, vector):
-        base_unit_type = self.calc_base_unit_type(vector)
+        base_spec = self.calc_base_spec(vector)
         new_val = val
-        unit_type = []
-        for u in base_unit_type:
+        spec = []
+        for u in base_spec:
             new_val, ut = self._base_unitise_one(new_val, u)
-            unit_type.append(ut)
-        return new_val, unit_type
+            spec.append(ut)
+        return new_val, spec
     
-    def unitise_typed(self, val, unit_type):
+    def unitise_typed(self, val, spec):
         out = val
-        for u in unit_type:
+        for u in spec:
             out /= base.units.get_by_index(u).value
         return out
     

@@ -34,17 +34,17 @@ class Units():
     def _add_base_type(self, i, base_type):
         self._add_base_type[i] = base_type
     
-    def new(self, abbr, value, vector, unit_type, name, base_type):
+    def new(self, abbr, value, vector, spec, name, base_type):
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
-        unit_type = [self._ind(u) for u in unit_type]
+        spec = [self._ind(u) for u in spec]
         index = self._ind(abbr)
         index_base = [self._ind(b) for b in base_type]
         self._base_types[index] = index_base
-        u = Unit(abbr, value, vector, unit_type, name)
+        u = Unit(abbr, value, vector, spec, name)
         self.safe_set(self.units, abbr, u)
         # Now make the corresponding inverse ('negative') unit
-        ut = [-u for u in unit_type]
+        ut = [-u for u in spec]
         uneg = Unit(abbr, 1/value, -vector, ut, name)
         self.safe_set(self.units, '-' + abbr, uneg)
         index = self._ind('-' + abbr)
@@ -82,31 +82,31 @@ class Units():
         else:
             unit_dct[key] = val
         
-    def _derive(self, unit_type):
-        us = [self[u] for u in unit_type]
+    def _derive(self, spec):
+        us = [self[u] for u in spec]
         vector = np.sum([u.vector for u in us], axis=0)
         value = np.prod([u.value for u in us])
         return value, vector
         
-    def _make_unit(self, units, unit_type, abbr, v):
+    def _make_unit(self, units, spec, abbr, v):
         value, derivation, name = v
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, vector = self._derive(derivation)
-        self.new(abbr, value * m, vector, [abbr], name, [unit_type])
+        self.new(abbr, value * m, vector, [abbr], name, [spec])
     
     def _make_type_dct(self, dct):
         units = self.units
-        for unit_type, d in dct.items():
+        for spec, d in dct.items():
             if isinstance(d, list):
                 self._make_base_types(d)
                 continue
             for abbr, v in d.items():
                 if abbr == '_base':
                     base_abbr = v
-                    self.bases[self._ind(unit_type)] = self._ind(base_abbr)
+                    self.bases[self._ind(spec)] = self._ind(base_abbr)
                 else:
-                    self._make_unit(units, unit_type, abbr, v)
+                    self._make_unit(units, spec, abbr, v)
 
     def __getitem__(self, abbr):
         if abbr in self.units:
@@ -122,13 +122,13 @@ class Units():
     def get_by_index(self, i):
         return self.units[self._num_dct[i]]
     
-    def str_unit_type(self, unit_type):
-        if unit_type is None:
+    def str_spec(self, spec):
+        if spec is None:
             return 'base'
-        elif len(unit_type)==0:
+        elif len(spec)==0:
             return 'dimensionless'
-        num = [i for i in unit_type if i > 0]
-        den = [-i for i in unit_type if i < 0]
+        num = [i for i in spec if i > 0]
+        den = [-i for i in spec if i < 0]
         def f(v, c):
             if c == 1:
                 return v

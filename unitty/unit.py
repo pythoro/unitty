@@ -8,11 +8,11 @@ Created on Fri May  1 11:51:58 2020
 from .quantity import Quantity
 
 class Unit(Quantity):
-    def __init__(self, abbr, value, vector, unit_type, name):
+    def __init__(self, abbr, value, vector, spec, name):
         self.abbr = abbr
         self.value = value
         self.vector = vector
-        self.unit_type = unit_type
+        self.spec = spec
         self.name = name
         
     def __str__(self):
@@ -30,6 +30,6 @@ class Unit(Quantity):
         return other / self.value
     
     def __rmatmul__(self, other):
-        return Quantity(self.value * other, unit_type=self.unit_type,
+        return Quantity(self.value * other, spec=self.spec,
                         vector=self.vector)
     
