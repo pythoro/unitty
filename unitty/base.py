@@ -31,24 +31,21 @@ class Units():
     
     def str(self, ind):
         return self._num_dct[ind]
-        
-    def _add_utype(self, i, utype):
-        self._add_utype[i] = utype
-    
-    def new(self, abbr, value, vector, spec, name, utype):
+            
+    def _new(self, index, value, vector, spec, name, utype):
+        abbr = self.str(index)
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
-        spec = [self._ind(u) for u in spec]
-        index = self._ind(abbr)
-        index_base = self._ind(utype)
-        self._utypes[index] = index_base
+        self._utypes[index] = utype
         u = Unit(abbr, value, vector, spec, name)
         self.safe_set(self.units, abbr, u)
+        return u
+    
+    def new(self, index, value, vector, spec, name, utype):
+        u = self._new(index, value, vector, spec, name, utype)
         # Now make the corresponding inverse ('negative') unit
-        ut = [-u for u in spec]
-        uneg = Unit(abbr, 1/value, -vector, ut, name)
-        self.safe_set(self.units, '-' + abbr, uneg)
-        self._utypes[-index] = -index_base
+        spec = [-s for s in spec]
+        self._new(-index, 1/value, -vector, spec, name, -utype)
         return u
     
     def _make_utypes(self, types):
@@ -58,7 +55,8 @@ class Units():
             a[ind] = 1
             return a
         for i, t in enumerate(types):
-            self.new(t, 1.0, vec(i), [t], t, t)
+            index = self._ind(t)
+            self.new(index, 1.0, vec(i), [index], t, index)
     
     def load(self, fname=None):
         self.units = {} # The unit instances
@@ -88,25 +86,28 @@ class Units():
         value = np.prod([u.value for u in us])
         return value, vector
         
-    def _make_unit(self, units, utype, abbr, v):
+    def _make_unit(self, units, utype, index, v):
         value, derivation, name = v
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, vector = self._derive(derivation)
-        self.new(abbr, value * m, vector, [abbr], name, utype)
+        spec = [index]
+        self.new(index, value * m, vector, spec, name, utype)
     
     def _make_type_dct(self, dct):
         units = self.units
-        for utype, d in dct.items():
+        for utype_str, d in dct.items():
+            utype = self._ind(utype_str)
             if isinstance(d, list):
                 self._make_utypes(d)
                 continue
-            for abbr, v in d.items():
-                if abbr == '_base':
-                    base_abbr = v
-                    self.bases[self._ind(utype)] = self._ind(base_abbr)
+            for abbr_str, v in d.items():
+                if abbr_str == '_base':
+                    # Set the base for the utype
+                    self.bases[utype] = self._ind(v)
                 else:
-                    self._make_unit(units, utype, abbr, v)
+                    index = self._ind(abbr_str)
+                    self._make_unit(units, utype, index, v)
 
     def __getitem__(self, abbr):
         if abbr in self.units:
