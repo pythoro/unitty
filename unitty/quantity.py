@@ -37,7 +37,7 @@ class Quantity():
         num = [i for i in unit_type if i > 0]
         den = [-i for i in unit_type if i < 0]
         num = [units._num_dct[i] for i in num]
-        den = [units._num_dct[-i] for i in den]
+        den = [units._num_dct[i] for i in den]
         s_num = '1' if len(num) == 0 else '.'.join(num)
         n = len(den)
         if n == 0:
@@ -103,13 +103,15 @@ class Quantity():
                         unit_vec=-self.unit_vec)
     
     def _mul(self, other):
-        unit_type = self.unit_type.extend(other.unit_type)
+        unit_type = self.unit_type.copy()
+        unit_type.extend(other.unit_type)
         unit_vec = self.unit_vec + other.unit_vec
         return Quantity(self.value * other.value, unit_type=unit_type,
                         unit_vec=unit_vec)
 
     def _div(self, other):
-        unit_type = self.unit_type.extend([-u for u in other.unit_type])
+        unit_type = self.unit_type.copy()
+        unit_type.extend([-u for u in other.unit_type])
         unit_vec = self.unit_vec - other.unit_vec
         return Quantity(self.value / other.value, unit_type=unit_type,
                         unit_vec=unit_vec)

@@ -64,19 +64,19 @@ class System():
                 if isinstance(abbr, list):
                     unit = base.units[abbr[1]]
                     mult = abbr[0] * unit.value
-                    a = base.units._str_to_i(unit.abbr)
+                    a = base.units._ind(unit.abbr)
                 else:
                     unit = base.units[abbr]
                     mult = unit.value
-                    a = base.units._str_to_i(abbr)
+                    a = base.units._ind(abbr)
                 unit_dct[a] = mult
-            d[base.units._str_to_i(unit_type)] = unit_dct
+            d[base.units._ind(unit_type)] = unit_dct
         return d
     
     def calc_base_unit_type(self, unit_vec):
         unit_type = []
         for n, name in zip(unit_vec, base.units.base_types):
-            i = base.units._str_to_i(name)
+            i = base.units._ind(name)
             unit_type.extend([i]*int(abs(n)))
         return unit_type
 
