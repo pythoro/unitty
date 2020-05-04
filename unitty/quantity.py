@@ -78,17 +78,46 @@ class Quantity():
         else:
             return value
 
+    def __add__(self, other):
+        quantity = isinstance(other, Quantity)
+        if not quantity:
+            raise NotImplementedError('Quantity instances can only be added '
+                                      + 'to Quantity instances.')
+        if quantity:
+            if any(other.vector != self.vector):
+                raise ValueError('Incompatible units.')
+        return Quantity(self.value + other.value, spec=self.spec,
+                        vector=self.vector)
+
+    def __sub__(self, other):
+        quantity = isinstance(other, Quantity)
+        if not quantity:
+            raise NotImplementedError('Quantity instances can only be added '
+                                      + 'to Quantity instances.')
+        if quantity:
+            if any(other.vector != self.vector):
+                raise ValueError('Incompatible units.')
+        return Quantity(self.value - other.value, spec=self.spec,
+                        vector=self.vector)
+
     def __mul__(self, other):
         quantity = isinstance(other, Quantity)
         if quantity:
             return self._mul(other)
         return self._get_quantity(quantity, self.value * other, spec=self.spec,
                         vector=self.vector)
-
+        
     def __pow__(self, other, modulo=None):
         if not isinstance(other, int):
             raise ValueError('Can only raise units to integer powers.')
         return self._pow(other)
+
+    def __rpow__(self, other, modulo=None):
+        if isinstance(other, Quantity):
+            raise ValueError('Units cannot be raised to the power of other '
+                             + 'units.')
+        return self._get_quantity(False, other**self.value, spec=self.spec,
+                        vector=self.vector)
     
     def __truediv__(self, other):
         quantity = isinstance(other, Quantity)
@@ -103,7 +132,6 @@ class Quantity():
             return self._mul(other)
         return self._get_quantity(quantity, self.value * other, spec=self.spec,
                         vector=self.vector)
-
 
     def __rtruediv__(self, other):
         quantity = isinstance(other, Quantity)
@@ -126,7 +154,6 @@ class Quantity():
         vector = self.vector - other.vector
         return Quantity(self.value / other.value, spec=spec,
                         vector=vector)
-
 
     def _pow(self, other):
         new = self
@@ -158,19 +185,26 @@ class Quantity():
         See:
             https://numpy.org/devdocs/user/basics.dispatch.html
         '''
-        if method == '__call__':
-            if isinstance(inputs[0], Quantity):
-                v1 = inputs[0].value
-            else:
-                v1 = inputs[0]
-            if isinstance(inputs[1], Quantity):
-                v2 = inputs[1].value
-            else:
-                v2 = inputs[1]
-            return Quantity(v1 * v2, spec=self.spec,
-                        vector=self.vector)
-        else:
+        ufunc_name = ufunc.__name__
+        if method != '__call__':
             return NotImplemented
+        quantity = isinstance(inputs[0], Quantity)
+        if ufunc_name=='multiply':
+            value = inputs[0] * inputs[1].value
+            return self._get_quantity(quantity, value,
+                                      spec=self.spec, vector=self.vector)
+
+        elif ufunc_name=='true_divide':
+            value = inputs[0] / inputs[1].value
+            return self._get_quantity(quantity, value,
+                                      spec=self.spec, vector=self.vector)
+        elif ufunc_name=='left_shift':
+            return Quantity(inputs[0] * inputs[1].value, spec=self.spec,
+                        vector=self.vector)
+        elif ufunc_name=='right_shift':
+            return inputs[0] * inputs[1].value
+        return NotImplemented
+            
     
 
 
