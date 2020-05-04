@@ -28,45 +28,40 @@ class Quantity():
         if unit.unit_vec != self.unit_vec:
             raise ValueError('Incompatible quantity type')
         self.unit_type = unit.unit_type
-        
-    def _str_unit_type(self, unit_type):
-        if unit_type is None:
-            return 'base'
-        elif len(unit_type)==0:
-            return 'dimensionless'
-        num = [i for i in unit_type if i > 0]
-        den = [-i for i in unit_type if i < 0]
-        num = [units._num_dct[i] for i in num]
-        den = [units._num_dct[i] for i in den]
-        s_num = '1' if len(num) == 0 else '.'.join(num)
-        n = len(den)
-        if n == 0:
-            return s_num
-        elif n == 1:
-            return s_num + '/' + den[0]
-        else:
-            return s_num + '/(' + '.'.join(den) + ')'
-        
-    def in_units(self, unit=None):
+                
+    def _in_units(self, unit=None):
         if unit is not None:
             if unit.unit_vec != self.unit_vec:
                 raise ValueError('Incompatible quantity type')
             unit_type = unit.unit_type
+            value = self.value * unit.value
         else:
             unit_type = self.unit_type
-        value = systems.unitise_typed(self.value, self.unit_type)
+            value = self.value
+        value = systems.unitise_typed(value, unit_type)
         return value, unit_type
 
-    def unitise(self):
+    def in_units(self, unit=None):
+        return self._to_str(*self._in_units(unit))
+
+    def _unitise(self):
         return systems.unitise(self.value, self.unit_type)
 
-    def base_unitise(self):
+    def unitise(self):
+        return self._to_str(*self._unitise())
+
+    def _base_unitise(self):
         return systems.base_unitise(self.value, self.unit_vec)
     
+    def base_unitise(self):
+        return self._to_str(*self._base_unitise())
+    
+    def _to_str(self, value, unit_type):
+        return ('{:0.6g}'.format(value) + ' ' 
+                + units.str_unit_type(unit_type))
+    
     def __str__(self):
-        value, unit_type = self.in_units()
-        return ('{:0.3g}'.format(value) + ' ' 
-                + self._str_unit_type(unit_type))
+        return self._to_str(*self.in_units())
     
     def __repr__(self):
         return self.__str__()

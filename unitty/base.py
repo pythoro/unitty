@@ -121,6 +121,26 @@ class Units():
     
     def get_by_index(self, i):
         return self.units[self._num_dct[i]]
+    
+    def str_unit_type(self, unit_type):
+        if unit_type is None:
+            return 'base'
+        elif len(unit_type)==0:
+            return 'dimensionless'
+        num = [i for i in unit_type if i > 0]
+        den = [-i for i in unit_type if i < 0]
+        num = [units._num_dct[i] for i in num]
+        den = [units._num_dct[i] for i in den]
+        num.sort()
+        den.sort()
+        s_num = '1' if len(num) == 0 else '.'.join(num)
+        n = len(den)
+        if n == 0:
+            return s_num
+        elif n == 1:
+            return s_num + '/' + den[0]
+        else:
+            return s_num + '/(' + '.'.join(den) + ')'
 
 units = Units()
 

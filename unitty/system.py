@@ -77,7 +77,10 @@ class System():
         unit_type = []
         for n, name in zip(unit_vec, base.units.base_types):
             i = base.units._ind(name)
-            unit_type.extend([i]*int(abs(n)))
+            if n > 0:
+                unit_type.extend([i]*int(abs(n)))
+            else:
+                unit_type.extend([-i]*int(abs(n)))
         return unit_type
 
     def _unitise_one(self, val, unit_type):
@@ -99,8 +102,11 @@ class System():
         div = False
         if unit_type < 0:
             div = True
-        base_type_i = base.units._base_types[unit_type][0] # length, force, etc
-        b = base.units.bases[base_type_i] # m, N etc
+        base_type_i = abs(base.units._base_types[unit_type][0]) # length, force, etc
+        if base_type_i in base.units.bases:
+            b = base.units.bases[base_type_i] # m, N etc
+        else:
+            b = base_type_i
         u = base.units.get_by_index(b)
         if div:
             return val * u.value, -b
@@ -128,13 +134,7 @@ class System():
     def unitise_typed(self, val, unit_type):
         out = val
         for u in unit_type:
-            div = False
-            if u < 0:
-                div = True
-            if div:
-                out /= base.units.get_by_index(u).value
-            else:
-                out *= base.units.get_by_index(u).value
+            out /= base.units.get_by_index(u).value
         return out
     
 
