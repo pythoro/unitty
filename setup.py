@@ -14,16 +14,16 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     
 
 setuptools.setup(
-    name="unitt",
+    name="unitty",
     version="0.0.1",
     author="Reuben Rusk",
     author_email="pythoro@mindquip.com",
     description="Change unit systems without changing code",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pythoro/fastwire.git",
-    download_url="https://github.com/pythoro/unitt/archive/v0.0.1.zip",
-    packages=['unitt'],
+    url="https://github.com/pythoro/unitty.git",
+    download_url="https://github.com/pythoro/unitty/archive/v0.0.1.zip",
+    packages=['unitty'],
     keywords=['WIRE', 'CONNECTION', 'UTILITY'],
     classifiers=[
         "Programming Language :: Python :: 3.6",
