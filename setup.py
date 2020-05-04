@@ -24,7 +24,7 @@ setuptools.setup(
     url="https://github.com/pythoro/unitty.git",
     download_url="https://github.com/pythoro/unitty/archive/v0.0.1.zip",
     packages=['unitty'],
-    keywords=['WIRE', 'CONNECTION', 'UTILITY'],
+    keywords=['UNIT', 'UNITS', 'UTILITY'],
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -34,5 +34,5 @@ setuptools.setup(
         "Natural Language :: English",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    install_requires=[],
+    install_requires=['numpy', 'ruamel.yaml'],
 )
