@@ -16,8 +16,12 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Units():
+    _autoload = True
+    
     def __init__(self, fname=None):
-        self.load(fname)
+        if self._autoload or fname is not None:
+            raw = self._load_raw(fname)
+            self.load(raw)
     
     def _ind(self, s):
         if s in self._ind_dct:
@@ -58,14 +62,13 @@ class Units():
             index = self._ind(t)
             self.new(index, 1.0, vec(i), [index], t, index)
     
-    def load(self, fname=None):
+    def load(self, dct):
         self.units = {} # The unit instances
         self.bases = {} # The base units for time, length, etc
         self._utypes = {} # the length, time etc for given id
         self._num_dct = {} # The attr for given index
         self._ind_dct = {} # the index for given attr
-        raw = self._load_raw(fname)
-        self._make_type_dct(raw)
+        self._make_type_dct(dct)
     
     def _load_raw(self, fname=None):
         if fname is None:
