@@ -22,10 +22,12 @@ def set_units(u):
 
 
 class Quantity():
-    def __init__(self, value, spec, vector):
+    def __init__(self, value, spec, vector, abbr=None, name=None):
         self.value = value
         self.spec = spec
         self.vector = vector
+        self.abbr = abbr
+        self.name = name
         
     def set_unit(self, unit):
         if unit.vector != self.vector:
@@ -74,7 +76,7 @@ class Quantity():
 
     def _get_quantity(self, quantity, value, spec, vector):
         if settings['always_make_quantities']:
-            return Quantity(value, spec, vector)
+            return Quantity(value=value, spec=spec, vector=vector)
         else:
             return value
 
@@ -152,7 +154,7 @@ class Quantity():
         spec = self.spec.copy()
         spec.extend([-u for u in other.spec])
         vector = self.vector - other.vector
-        return Quantity(self.value / other.value, spec=spec,
+        return Quantity(value=self.value / other.value, spec=spec,
                         vector=vector)
 
     def _pow(self, other):
@@ -165,7 +167,7 @@ class Quantity():
         quantity = isinstance(other, Quantity)
         if quantity:
             return self._mul(other)
-        return Quantity(self.value * other, spec=self.spec,
+        return Quantity(value=self.value * other, spec=self.spec,
                         vector=self.vector)
     
     def __rrshift__(self, other):
@@ -199,7 +201,7 @@ class Quantity():
             return self._get_quantity(quantity, value,
                                       spec=self.spec, vector=self.vector)
         elif ufunc_name=='left_shift':
-            return Quantity(inputs[0] * inputs[1].value, spec=self.spec,
+            return Quantity(value=inputs[0] * inputs[1].value, spec=self.spec,
                         vector=self.vector)
         elif ufunc_name=='right_shift':
             return inputs[0] * inputs[1].value

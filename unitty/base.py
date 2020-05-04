@@ -41,7 +41,7 @@ class Units():
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
         self._utypes[index] = utype
-        u = Unit(abbr, value, vector, spec, name)
+        u = Unit(value=value, spec=spec, vector=vector, abbr=abbr, name=name)
         self.safe_set(self.units, abbr, u)
         return u
     
@@ -62,12 +62,15 @@ class Units():
             index = self._ind(t)
             self.new(index, 1.0, vec(i), [index], t, index)
     
-    def load(self, dct):
+    def _clear(self):
         self.units = {} # The unit instances
         self.bases = {} # The base units for time, length, etc
         self._utypes = {} # the length, time etc for given id
         self._num_dct = {} # The attr for given index
         self._ind_dct = {} # the index for given attr
+        
+    def load(self, dct):
+        self._clear()
         self._make_type_dct(dct)
     
     def _load_raw(self, fname=None):
