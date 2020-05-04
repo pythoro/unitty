@@ -14,13 +14,22 @@ representing it elsewhere is typically redundant.
 
 Unitty provides a flexible, lightweight package to:
 
-* Convert numbers to and from different units
-* Fully customise units and unit systems.
 * Automatically switch outputs to a different unit system using a single 
 command, while keeping meaningful units (e.g. for force, pressure, etc.).
-* Bundle values together with units for downstream use (e.g. reports, plots).
+This capability was a core reason to write unitty.
+* Apply units intuitively.
+* Convert numbers to and from different units.
+* Fully customise units and unit systems. The user needs full flexibility
+of the systems and units used.
+* Bundle values with units into quantities for downstream use (e.g. reports,
+plots).
+* Not lock the user into objects with units attached. By default, units
+are not attached to calculation objects - the results are simply floats or
+arrays. This behaviour can be changed automatically to do dimensional
+checks during unittesting. 
 * Use meaningful units (e.g. for force, pressure, etc.) while also allowing
-dimensionality reduction and checking.
+dimensionality reduction and checking. Automatic dimensionality reduction 
+in some other packages can be frustrating.
 
 It is built on the idea that units provide scale factors to convert numbers
 to and from values in SI base units. Since SI base units all have magnitudes of
@@ -33,15 +42,16 @@ TODO
 ## Alternatives
 
 Several other packages might be better suited to your particular needs. Here
-are some to consider, along with some notes.
+are some to consider, along with some notes. It is believed that none of
+these other packages allow to automatically switch outputs between unit
+systems with a single command.
 
 * numericalunits: Units are values. Simple.
-* astropy.units: Locks units into calculation values - can't get back to
-simple floats or arrays.
-* sympy.physics.units: Excellent.
-* pint: A very powerful units package, but it cannot switch between
-* unyt
-unit systems like unitty.
+* astropy.units: Great, but locks units into calculation values - can't get
+back to simple floats or arrays.
+* sympy.physics.units: Solid.
+* pint: A very powerful units package.
+* unyt: An excellent and capable package.
 * quantiphy: Seems a bit awkward to use.
 * Buckingham: A bit awkward to use.
 * DimPy: Very old.
@@ -49,7 +59,7 @@ unit systems like unitty.
 * Python-quantities: A good package.
 * physipy: Another good package
 * SciMath Units: Large range of units.
-* udunitspy
+* cf_units: Suggested replacement of old udunitspy package. Clunky.
 * Units
 * Unum
 * quantities
