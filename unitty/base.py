@@ -14,6 +14,7 @@ from .unit import Unit
 root = os.path.dirname(os.path.abspath(__file__))
 
 
+
 class Units():
     def __init__(self, fname=None):
         self.load(fname)
@@ -39,7 +40,7 @@ class Units():
             raise KeyError(abbr + ' is already defined.')
         spec = [self._ind(u) for u in spec]
         index = self._ind(abbr)
-        index_base = [self._ind(b) for b in utype]
+        index_base = self._ind(utype)
         self._utypes[index] = index_base
         u = Unit(abbr, value, vector, spec, name)
         self.safe_set(self.units, abbr, u)
@@ -47,8 +48,7 @@ class Units():
         ut = [-u for u in spec]
         uneg = Unit(abbr, 1/value, -vector, ut, name)
         self.safe_set(self.units, '-' + abbr, uneg)
-        index = self._ind('-' + abbr)
-        self._utypes[index] = [-b for b in index_base]
+        self._utypes[-index] = -index_base
         return u
     
     def _make_utypes(self, types):
@@ -58,7 +58,7 @@ class Units():
             a[ind] = 1
             return a
         for i, t in enumerate(types):
-            self.new(t, 1.0, vec(i), [t], t, [t])
+            self.new(t, 1.0, vec(i), [t], t, t)
     
     def load(self, fname=None):
         self.units = {} # The unit instances
@@ -88,25 +88,25 @@ class Units():
         value = np.prod([u.value for u in us])
         return value, vector
         
-    def _make_unit(self, units, spec, abbr, v):
+    def _make_unit(self, units, utype, abbr, v):
         value, derivation, name = v
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, vector = self._derive(derivation)
-        self.new(abbr, value * m, vector, [abbr], name, [spec])
+        self.new(abbr, value * m, vector, [abbr], name, utype)
     
     def _make_type_dct(self, dct):
         units = self.units
-        for spec, d in dct.items():
+        for utype, d in dct.items():
             if isinstance(d, list):
                 self._make_utypes(d)
                 continue
             for abbr, v in d.items():
                 if abbr == '_base':
                     base_abbr = v
-                    self.bases[self._ind(spec)] = self._ind(base_abbr)
+                    self.bases[self._ind(utype)] = self._ind(base_abbr)
                 else:
-                    self._make_unit(units, spec, abbr, v)
+                    self._make_unit(units, utype, abbr, v)
 
     def __getitem__(self, abbr):
         if abbr in self.units:

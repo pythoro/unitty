@@ -73,15 +73,15 @@ class System():
             d[base.units._ind(spec)] = unit_dct
         return d
     
-    def calc_base_spec(self, vector):
-        spec = []
+    def calc_utypes(self, vector):
+        utypes = []
         for n, name in zip(vector, base.units.utypes):
             i = base.units._ind(name)
             if n > 0:
-                spec.extend([i]*int(abs(n)))
+                utypes.extend([i]*int(abs(n)))
             else:
-                spec.extend([-i]*int(abs(n)))
-        return spec
+                utypes.extend([-i]*int(abs(n)))
+        return utypes
 
     def _unitise_one(self, val, spec):
         if abs(spec) not in self._sys_dct:
@@ -105,7 +105,7 @@ class System():
         div = False
         if spec < 0:
             div = True
-        utype_i = abs(base.units._utypes[spec][0]) # length, force, etc
+        utype_i = abs(base.units._utypes[spec]) # length, force, etc
         if utype_i in base.units.bases:
             b = base.units.bases[utype_i] # m, N etc
         else:
@@ -119,14 +119,14 @@ class System():
         new_val = val
         out_spec = []
         utypes = base.units._utypes
-        utype = [t for bt in spec for t in utypes[bt]]
+        utype = [utypes[s] for s in spec]
         for u in utype:
             new_val, ut = self._unitise_one(new_val, u)
             out_spec.append(ut)
         return new_val, out_spec
     
     def base_unitise(self, val, vector):
-        base_spec = self.calc_base_spec(vector)
+        base_spec = self.calc_utypes(vector)
         new_val = val
         spec = []
         for u in base_spec:
