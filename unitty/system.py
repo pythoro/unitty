@@ -8,7 +8,7 @@ Created on Fri May  1 11:20:07 2020
 import os
 import ruamel.yaml as yaml
 import numpy as np
-
+import pprint
 from . import base
 
 root = os.path.dirname(os.path.abspath(__file__))
@@ -56,11 +56,18 @@ class System():
     def __init__(self, dct):
         self._sys_dct = self._make_sys_dct(dct)
     
+    def __str__(self):
+        d = {base.units.str(k): [base.units.str(v) for v in val]
+                        for k, val in self._sys_dct.items()}
+        return pprint.pformat(d)
+    
+    def __repr__(self):
+        return self.__str__()
+    
     def _make_sys_dct(self, dct):
         d = {}
         for spec, units_raw in dct.items():
             unit_dct = {}
-            units_raw.reverse()
             for abbr in units_raw:
                 if isinstance(abbr, list):
                     unit = base.units[abbr[1]]
