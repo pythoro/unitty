@@ -15,10 +15,12 @@ representing it elsewhere is typically redundant.
 Unitty provides a flexible, lightweight package to:
 
 * Convert numbers to and from different units
-* Create derivative units
-* Automatically switch outputs to a different unit system, without changing
-any code.
-* Bundle values together with units for downstream use (e.g. reports, plots). 
+* Fully customise units and unit systems.
+* Automatically switch outputs to a different unit system using a single 
+command, while keeping meaningful units (e.g. for force, pressure, etc.).
+* Bundle values together with units for downstream use (e.g. reports, plots).
+* Use meaningful units (e.g. for force, pressure, etc.) while also allowing
+dimensionality reduction and checking.
 
 It is built on the idea that units provide scale factors to convert numbers
 to and from values in SI base units. Since SI base units all have magnitudes of
@@ -26,24 +28,35 @@ to and from values in SI base units. Since SI base units all have magnitudes of
 
 ## Quick start
 
+TODO
 
 ## Alternatives
 
 Several other packages might be better suited to your particular needs. Here
-are some to consider:
+are some to consider, along with some notes.
 
-* numericalunits: Units and dimensional analysis compatible with everything
-* pint: Define, operate and manipulate physical quantities.
-* quantiphy: Pairs numbers and units.
-* astropy.units
-* Buckingham
-* DimPy
-* Magnitude
-* Python-quantities
-* Scalar
-* Scientific.Physics.PhysicalQuantities
-* SciMath
-* sympy.physics.units
+* numericalunits: Units are values. Simple.
+* astropy.units: Locks units into calculation values - can't get back to
+simple floats or arrays.
+* sympy.physics.units: Excellent.
+* pint: A very powerful units package, but it cannot switch between
+* unyt
+unit systems like unitty.
+* quantiphy: Seems a bit awkward to use.
+* Buckingham: A bit awkward to use.
+* DimPy: Very old.
+* Magnitude: Clunky to use.
+* Python-quantities: A good package.
+* physipy: Another good package
+* SciMath Units: Large range of units.
 * udunitspy
 * Units
 * Unum
+* quantities
+* physical-quantities
+* parampy
+* pynbody
+* misu
+* pysics
+
+
