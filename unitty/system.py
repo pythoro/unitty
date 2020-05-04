@@ -83,18 +83,23 @@ class System():
                 unit_type.extend([-i]*int(abs(n)))
         return unit_type
 
-    def _unitise_one(self, val, unit_type, div=False):
+    def _unitise_one(self, val, unit_type):
         if abs(unit_type) not in self._sys_dct:
             return val, unit_type
         d = self._sys_dct[abs(unit_type)]
+        div = unit_type < 0
+        trials = []
+        i_vals = []
         for i, mult in d.items():
-            if not div and (val/mult > 1e-2 and val/mult < 1e2):
-                break
-            if div and (val*mult > 1e-2 and val*mult < 1e2):
-                break
-        if div:
-            return val * mult, -i
-        return val / mult, i
+            if div:
+                trials.append(val * mult)
+                i_vals.append(-i)
+            else:
+                trials.append(val / mult)
+                i_vals.append(i)
+        a = [max(abs(v), 1/abs(v)) for v in trials]
+        ind = a.index(min(a))
+        return trials[ind], i_vals[ind]
 
     def _base_unitise_one(self, val, unit_type):
         div = False
@@ -115,13 +120,8 @@ class System():
         out_unit_type = []
         base_types = base.units._base_types
         base_type = [t for bt in unit_type for t in base_types[bt]]
-        num = [u for u in base_type if u > 0]
-        den = [u for u in base_type if u < 0]
-        for u in num:
+        for u in base_type:
             new_val, ut = self._unitise_one(new_val, u)
-            out_unit_type.append(ut)
-        for u in den:
-            new_val, ut = self._unitise_one(new_val, u, div=True)
             out_unit_type.append(ut)
         return new_val, out_unit_type
     
