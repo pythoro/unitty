@@ -61,7 +61,7 @@ class Units():
     def load(self, fname=None):
         self.units = {} # The unit instances
         self.bases = {} # The base units for time, length, etc
-        self._utypes = {} # the length, time for given id
+        self._utypes = {} # the length, time etc for given id
         self._num_dct = {} # The attr for given index
         self._ind_dct = {} # the index for given attr
         raw = self._load_raw(fname)

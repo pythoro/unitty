@@ -5,6 +5,8 @@ Created on Fri May  1 11:52:26 2020
 @author: Reuben
 """
 
+from . import settings
+
 systems = None
 
 def set_systems(sys):
@@ -66,10 +68,17 @@ class Quantity():
     def __repr__(self):
         return self.__str__()
 
+    def _get_quantity(self, quantity, value, spec, vector):
+        if settings['always_make_quantities']:
+            return Quantity(value, spec, vector)
+        else:
+            return value
+
     def __mul__(self, other):
-        if isinstance(other, Quantity):
+        quantity = isinstance(other, Quantity)
+        if quantity:
             return self._mul(other)
-        return Quantity(self.value * other, spec=self.spec,
+        return self._get_quantity(quantity, self.value * other, spec=self.spec,
                         vector=self.vector)
 
     def __pow__(self, other, modulo=None):
@@ -78,22 +87,25 @@ class Quantity():
         return self._pow(other)
     
     def __truediv__(self, other):
-        if isinstance(other, Quantity):
+        quantity = isinstance(other, Quantity)
+        if quantity:
             return self._div(other)
-        return Quantity(self.value / other, spec=self.spec,
+        return self._get_quantity(quantity, self.value / other, spec=self.spec,
                         vector=self.vector)
 
     def __rmul__(self, other):
-        if isinstance(other, Quantity):
+        quantity = isinstance(other, Quantity)
+        if quantity:
             return self._mul(other)
-        return Quantity(self.value * other, spec=self.spec,
+        return self._get_quantity(quantity, self.value * other, spec=self.spec,
                         vector=self.vector)
 
 
     def __rtruediv__(self, other):
-        if isinstance(other, Quantity):
+        quantity = isinstance(other, Quantity)
+        if quantity:
             return self._div(other)
-        return Quantity(other / self.value,
+        return self._get_quantity(quantity, other / self.value,
                         spec=[-u for u in self.spec],
                         vector=-self.vector)
     
@@ -118,3 +130,14 @@ class Quantity():
             new = new._mul(self)
         return new
             
+    def __rlshift__(self, other):
+        if not isinstance(other, Quantity):
+            raise ValueError('Quantity not recognised.')
+        other.set_unit(self)
+
+    def __rrshift__(self, other):
+        return other / self.value
+            
+    def __rmatmul__(self, other):
+        return Quantity(self.value * other, spec=self.spec,
+                        vector=self.vector)

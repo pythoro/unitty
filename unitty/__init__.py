@@ -5,6 +5,10 @@ Created on Fri May  1 11:52:42 2020
 @author: Reuben
 """
 
+settings = {
+        'always_make_quantities': False
+        }
+
 from . import base
 from . import system
 from . import quantity
@@ -20,3 +24,4 @@ init()
 
 units = base.units
 set_system = system.set_system
+
