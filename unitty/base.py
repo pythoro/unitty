@@ -31,16 +31,16 @@ class Units():
     def str(self, ind):
         return self._num_dct[ind]
         
-    def _add_base_type(self, i, base_type):
-        self._add_base_type[i] = base_type
+    def _add_utype(self, i, utype):
+        self._add_utype[i] = utype
     
-    def new(self, abbr, value, vector, spec, name, base_type):
+    def new(self, abbr, value, vector, spec, name, utype):
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
         spec = [self._ind(u) for u in spec]
         index = self._ind(abbr)
-        index_base = [self._ind(b) for b in base_type]
-        self._base_types[index] = index_base
+        index_base = [self._ind(b) for b in utype]
+        self._utypes[index] = index_base
         u = Unit(abbr, value, vector, spec, name)
         self.safe_set(self.units, abbr, u)
         # Now make the corresponding inverse ('negative') unit
@@ -48,11 +48,11 @@ class Units():
         uneg = Unit(abbr, 1/value, -vector, ut, name)
         self.safe_set(self.units, '-' + abbr, uneg)
         index = self._ind('-' + abbr)
-        self._base_types[index] = [-b for b in index_base]
+        self._utypes[index] = [-b for b in index_base]
         return u
     
-    def _make_base_types(self, types):
-        self.base_types = types
+    def _make_utypes(self, types):
+        self.utypes = types
         def vec(ind):
             a = np.zeros(len(types))
             a[ind] = 1
@@ -63,7 +63,7 @@ class Units():
     def load(self, fname=None):
         self.units = {} # The unit instances
         self.bases = {} # The base units for time, length, etc
-        self._base_types = {} # the length, time for given id
+        self._utypes = {} # the length, time for given id
         self._num_dct = {} # The attr for given index
         self._ind_dct = {} # the index for given attr
         raw = self._load_raw(fname)
@@ -99,7 +99,7 @@ class Units():
         units = self.units
         for spec, d in dct.items():
             if isinstance(d, list):
-                self._make_base_types(d)
+                self._make_utypes(d)
                 continue
             for abbr, v in d.items():
                 if abbr == '_base':

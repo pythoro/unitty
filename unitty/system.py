@@ -41,8 +41,8 @@ class Systems():
     def active(self):
         return self._sys_dct[self._active]
         
-    def unitise(self, val, base_type):
-        return self._sys_dct[self._active].unitise(val, base_type)
+    def unitise(self, val, utype):
+        return self._sys_dct[self._active].unitise(val, utype)
 
     def base_unitise(self, val, type_vec):
         return self._sys_dct[self._active].base_unitise(val, type_vec)
@@ -75,7 +75,7 @@ class System():
     
     def calc_base_spec(self, vector):
         spec = []
-        for n, name in zip(vector, base.units.base_types):
+        for n, name in zip(vector, base.units.utypes):
             i = base.units._ind(name)
             if n > 0:
                 spec.extend([i]*int(abs(n)))
@@ -105,11 +105,11 @@ class System():
         div = False
         if spec < 0:
             div = True
-        base_type_i = abs(base.units._base_types[spec][0]) # length, force, etc
-        if base_type_i in base.units.bases:
-            b = base.units.bases[base_type_i] # m, N etc
+        utype_i = abs(base.units._utypes[spec][0]) # length, force, etc
+        if utype_i in base.units.bases:
+            b = base.units.bases[utype_i] # m, N etc
         else:
-            b = base_type_i
+            b = utype_i
         u = base.units.get_by_index(b)
         if div:
             return val * u.value, -b
@@ -118,9 +118,9 @@ class System():
     def unitise(self, val, spec):
         new_val = val
         out_spec = []
-        base_types = base.units._base_types
-        base_type = [t for bt in spec for t in base_types[bt]]
-        for u in base_type:
+        utypes = base.units._utypes
+        utype = [t for bt in spec for t in utypes[bt]]
+        for u in utype:
             new_val, ut = self._unitise_one(new_val, u)
             out_spec.append(ut)
         return new_val, out_spec
