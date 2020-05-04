@@ -7,6 +7,7 @@ Created on Fri May  1 11:20:07 2020
 
 import os
 import ruamel.yaml as yaml
+import numpy as np
 
 from . import base
 
@@ -97,7 +98,11 @@ class System():
             else:
                 trials.append(val / mult)
                 i_vals.append(i)
-        a = [max(abs(v), 1/abs(v)) for v in trials]
+        a = []
+        for v in trials:
+            num = np.mean(np.abs(np.atleast_1d(v)))
+            den = np.mean(10/np.abs(np.atleast_1d(v)))
+            a.append(np.max((num, den)))
         ind = a.index(min(a))
         return trials[ind], i_vals[ind]
 

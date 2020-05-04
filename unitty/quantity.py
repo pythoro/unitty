@@ -6,6 +6,7 @@ Created on Fri May  1 11:52:26 2020
 """
 
 from . import settings
+import numpy as np
 
 systems = None
 
@@ -59,8 +60,11 @@ class Quantity():
         return self._to_str(*self._base_unitise())
     
     def _to_str(self, value, spec):
-        return ('{:0.6g}'.format(value) + ' ' 
-                + units.str_spec(spec))
+        if isinstance(value, np.ndarray):
+            f = str(value)
+        else:
+            f = '{:0.6g}'.format(value)
+        return f + ' ' + units.str_spec(spec)
     
     def __str__(self):
         return self.unitise()
@@ -131,13 +135,42 @@ class Quantity():
         return new
             
     def __rlshift__(self, other):
-        if not isinstance(other, Quantity):
-            raise ValueError('Quantity not recognised.')
-        other.set_unit(self)
-
-    def __rrshift__(self, other):
-        return other / self.value
-            
-    def __rmatmul__(self, other):
+        quantity = isinstance(other, Quantity)
+        if quantity:
+            return self._mul(other)
         return Quantity(self.value * other, spec=self.spec,
                         vector=self.vector)
+    
+    def __rrshift__(self, other):
+        return other / self.value
+    
+    def __array__(self):
+        ''' For numpy 
+        
+        See:
+            https://numpy.org/devdocs/user/basics.dispatch.html
+        '''
+        return np.array(self.value)
+    
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        ''' For numpy 
+        
+        See:
+            https://numpy.org/devdocs/user/basics.dispatch.html
+        '''
+        if method == '__call__':
+            if isinstance(inputs[0], Quantity):
+                v1 = inputs[0].value
+            else:
+                v1 = inputs[0]
+            if isinstance(inputs[1], Quantity):
+                v2 = inputs[1].value
+            else:
+                v2 = inputs[1]
+            return Quantity(v1 * v2, spec=self.spec,
+                        vector=self.vector)
+        else:
+            return NotImplemented
+    
+
+
