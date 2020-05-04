@@ -53,11 +53,12 @@ class Systems():
 
 
 class System():
-    def __init__(self, dct):
+    def __init__(self, dct, units=None):
+        self._units = units if units is not None else base.units
         self._sys_dct = self._make_sys_dct(dct)
     
     def __str__(self):
-        d = {base.units.str(k): [base.units.str(v) for v in val]
+        d = {self._units.str(k): [self._units.str(v) for v in val]
                         for k, val in self._sys_dct.items()}
         return pprint.pformat(d)
     
@@ -70,21 +71,21 @@ class System():
             unit_dct = {}
             for abbr in units_raw:
                 if isinstance(abbr, list):
-                    unit = base.units[abbr[1]]
+                    unit = self._units[abbr[1]]
                     mult = abbr[0] * unit.value
-                    a = base.units._ind(unit.abbr)
+                    a = self._units._ind(unit.abbr)
                 else:
-                    unit = base.units[abbr]
+                    unit = self._units[abbr]
                     mult = unit.value
-                    a = base.units._ind(abbr)
+                    a = self._units._ind(abbr)
                 unit_dct[a] = mult
-            d[base.units._ind(spec)] = unit_dct
+            d[self._units._ind(spec)] = unit_dct
         return d
     
     def calc_utypes(self, vector):
         utypes = []
-        for n, name in zip(vector, base.units.utypes):
-            i = base.units._ind(name)
+        for n, name in zip(vector, self._units.utypes):
+            i = self._units._ind(name)
             if n > 0:
                 utypes.extend([i]*int(abs(n)))
             else:
@@ -117,12 +118,12 @@ class System():
         div = False
         if spec < 0:
             div = True
-        utype_i = abs(base.units._utypes[spec]) # length, force, etc
-        if utype_i in base.units.bases:
-            b = base.units.bases[utype_i] # m, N etc
+        utype_i = abs(self._units._utypes[spec]) # length, force, etc
+        if utype_i in self._units.bases:
+            b = self._units.bases[utype_i] # m, N etc
         else:
             b = utype_i
-        u = base.units.get_by_index(b)
+        u = self._units.get_by_index(b)
         if div:
             return val * u.value, -b
         return val / u.value, b
@@ -130,7 +131,7 @@ class System():
     def unitise(self, val, spec):
         new_val = val
         out_spec = []
-        utypes = base.units._utypes
+        utypes = self._units._utypes
         utype = [utypes[s] for s in spec]
         for u in utype:
             new_val, ut = self._unitise_one(new_val, u)
@@ -149,7 +150,7 @@ class System():
     def unitise_typed(self, val, spec):
         out = val
         for u in spec:
-            out /= base.units.get_by_index(u).value
+            out /= self._units.get_by_index(u).value
         return out
     
 

@@ -18,15 +18,15 @@ root = os.path.dirname(os.path.abspath(__file__))
 class Units():
     _autoload = True
     
-    def __init__(self, fname=None):
-        if self._autoload or fname is not None:
-            raw = self._load_raw(fname)
+    def __init__(self, fname=None, raw=None):
+        if self._autoload or fname is not None or raw is not None:
+            raw = self._load_raw(fname) if raw is None else raw
             self.load(raw)
     
     def _ind(self, s):
         if s in self._ind_dct:
             return self._ind_dct[s]
-        index = len(self._num_dct) + 1
+        index = len(self._num_dct) // 2 + 1
         self._num_dct[index] = s
         self._ind_dct[s] = index
         self._num_dct[-index] = '-' + s
@@ -103,10 +103,10 @@ class Units():
     def _make_type_dct(self, dct):
         units = self.units
         for utype_str, d in dct.items():
-            utype = self._ind(utype_str)
-            if isinstance(d, list):
+            if utype_str=='base_types':
                 self._make_utypes(d)
                 continue
+            utype = self._ind(utype_str)
             for abbr_str, v in d.items():
                 if abbr_str == '_base':
                     # Set the base for the utype
