@@ -129,10 +129,18 @@ class Units():
             return 'dimensionless'
         num = [i for i in unit_type if i > 0]
         den = [-i for i in unit_type if i < 0]
-        num = [units._num_dct[i] for i in num]
-        den = [units._num_dct[i] for i in den]
-        num.sort()
-        den.sort()
+        def f(v, c):
+            if c == 1:
+                return v
+            else:
+                return v + str(c)
+        def process(lst):
+            out = [units._num_dct[i] for i in lst]    
+            out.sort()
+            d = {v: out.count(v) for v in out}
+            return [f(v, c) for v, c in d.items()]
+        num = process(num)
+        den = process(den)
         s_num = '1' if len(num) == 0 else '.'.join(num)
         n = len(den)
         if n == 0:

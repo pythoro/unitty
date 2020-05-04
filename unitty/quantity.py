@@ -61,7 +61,7 @@ class Quantity():
                 + units.str_unit_type(unit_type))
     
     def __str__(self):
-        return self._to_str(*self.in_units())
+        return self.unitise()
     
     def __repr__(self):
         return self.__str__()
