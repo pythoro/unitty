@@ -142,7 +142,7 @@ class Units():
             else:
                 return v + str(c)
         def process(lst):
-            out = [units._num_dct[i] for i in lst]    
+            out = [self._num_dct[i] for i in lst]    
             out.sort()
             d = {v: out.count(v) for v in out}
             return [f(v, c) for v, c in d.items()]
