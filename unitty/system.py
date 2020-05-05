@@ -9,7 +9,7 @@ import os
 import ruamel.yaml as yaml
 import numpy as np
 import pprint
-from . import get_units
+from . import get_units, get_active
 
 root = os.path.dirname(os.path.abspath(__file__))
 
@@ -54,7 +54,7 @@ class Systems():
 
 class System():
     def __init__(self, dct):
-        self._units = get_units()
+        self._units = get_units(get_active())
         self._sys_dct = self._make_sys_dct(dct)
     
     def __str__(self):
