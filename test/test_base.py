@@ -35,6 +35,28 @@ TEST_DICT_4 = {'base_types': ['length', 'mass', 'time', 'area'],
                'force': {'_base': 'N', 
                         'N': [1.0, ['kg', 'm', '-s', '-s'], 'newton']}}
 
+TEST_DICT_5 = {'base_types': ['length', 'mass'],
+               'length': {'_base': 'm', 
+                        'm': [1.0, 'length', 'meter'],
+                        'cm': [0.01, 'm', 'centimeter'],
+                        'in': [2.54, 'cm', 'inch'],
+                        'ft': [12, 'in', 'foot']},
+               'mass': {'_base': 'kg', 
+                        'kg': [1.0, 'mass', 'kilogram'],
+                        'lbs': [0.45359237, 'kg', 'pound mass']},
+               }
+
+TEST_DICT_6 = {'base_types': ['length', 'mass'],
+               'length': {'_base': 'm', 
+                        'm': [1.0, 'length', 'meter', {'SI_prefixes': ['c']}],
+                        'in': [2.54, 'cm', 'inch'],
+                        'ft': [12, 'in', 'foot']},
+               'mass': {'_base': 'kg', 
+                        'kg': [1.0, 'mass', 'kilogram'],
+                        'lbs': [0.45359237, 'kg', 'pound mass']},
+               }
+
+
 class Test_Units(unittest.TestCase):
     
     def test_load_1(self):
