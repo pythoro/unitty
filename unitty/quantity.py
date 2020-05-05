@@ -9,13 +9,14 @@ from . import settings, get_active, get_units, get_systems
 import numpy as np
 
 class Quantity():
-    def __init__(self, value, spec, vector, abbr=None, name=None):
+    def __init__(self, value, spec, vector, abbr=None, name=None,
+                 parent=None):
         self.value = value
         self.spec = spec
         self.vector = vector
         self.abbr = abbr
         self.name = name
-        self._parent = get_active()
+        self._parent = get_active() if parent is None else parent
         
     def set_unit(self, unit):
         if any(unit.vector != self.vector):
@@ -67,7 +68,8 @@ class Quantity():
 
     def _get_quantity(self, quantity, value, spec, vector):
         if settings['always_make_quantities']:
-            return Quantity(value=value, spec=spec, vector=vector)
+            return Quantity(value=value, spec=spec, vector=vector,
+                            parent=self._parent)
         else:
             return value
 
@@ -80,7 +82,7 @@ class Quantity():
             if any(other.vector != self.vector):
                 raise ValueError('Incompatible units.')
         return Quantity(self.value + other.value, spec=self.spec,
-                        vector=self.vector)
+                        vector=self.vector, parent=self._parent)
 
     def __sub__(self, other):
         quantity = isinstance(other, Quantity)
@@ -91,7 +93,7 @@ class Quantity():
             if any(other.vector != self.vector):
                 raise ValueError('Incompatible units.')
         return Quantity(self.value - other.value, spec=self.spec,
-                        vector=self.vector)
+                        vector=self.vector, parent=self._parent)
 
     def __mul__(self, other):
         quantity = isinstance(other, Quantity)
@@ -139,14 +141,14 @@ class Quantity():
         spec.extend(other.spec)
         vector = self.vector + other.vector
         return Quantity(self.value * other.value, spec=spec,
-                        vector=vector)
+                        vector=vector, parent=self._parent)
 
     def _div(self, other):
         spec = self.spec.copy()
         spec.extend([-u for u in other.spec])
         vector = self.vector - other.vector
         return Quantity(value=self.value / other.value, spec=spec,
-                        vector=vector)
+                        vector=vector, parent=self._parent)
 
     def _pow(self, other):
         new = self
@@ -159,7 +161,7 @@ class Quantity():
         if quantity:
             return self._mul(other)
         return Quantity(value=self.value * other, spec=self.spec,
-                        vector=self.vector)
+                        vector=self.vector, parent=self._parent)
     
     def __rrshift__(self, other):
         return other / self.value
@@ -193,7 +195,7 @@ class Quantity():
                                       spec=self.spec, vector=self.vector)
         elif ufunc_name=='left_shift':
             return Quantity(value=inputs[0] * inputs[1].value, spec=self.spec,
-                        vector=self.vector)
+                        vector=self.vector, parent=self._parent)
         elif ufunc_name=='right_shift':
             return inputs[0] * inputs[1].value
         return NotImplemented
