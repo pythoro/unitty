@@ -36,7 +36,7 @@ volume:
 time:
     _base: s
     # Metric
-    s: [1.0, time, second, {'SI_prefixes': ['p', 'n', 'u', 'm', 'c', 'k']}]
+    s: [1.0, time, second, {'SI_prefixes': ['p', 'n', 'u', 'm']}]
     min: [60, s, minute]
     hour: [60, min, hour]
     day: [24, hour, day]
@@ -67,7 +67,7 @@ torque:
 power:
     _base: W
     # Metric
-    W: [1.0, [J, -s], watt, {'SI_prefixes': ['m', 'k', 'M']}]
+    W: [1.0, [J, -s], watt, {'SI_prefixes': ['m', 'k', 'M', 'G']}]
 pressure:
     _base: Pa
     # Metric
