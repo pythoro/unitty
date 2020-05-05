@@ -69,11 +69,13 @@ class Test_Quantity(unittest.TestCase):
         self.assertEqual(q, 0.001*5)
         
     def test_quantity_divide(self):
-        q1 = Quantity(value=0.001, spec=[3], vector=self.vector,
+        q1 = Quantity(value=1, spec=[1], vector=self.vector,
+                     abbr='m', name='meter')
+        q2 = Quantity(value=0.001, spec=[3], vector=self.vector,
                      abbr='mm', name='millimeter')
-        q = q1 / q1
-        self.assertEqual(q.value, 1.0)
-        self.assertSequenceEqual(q.spec, [3, -3])
+        q = q1 / q2
+        self.assertEqual(q.value, 1000.0)
+        self.assertSequenceEqual(q.spec, [1, -3])
         self.assertTrue(np.allclose(self.vector*0, q.vector))
         self.assertEqual(q.abbr, None)
         self.assertEqual(q.name, None)

@@ -23,6 +23,16 @@ TEST_DICT_3 = {'base_types': ['length', 'area'],
                'area': {'_base': 'm2', 
                         'm2': [1.0, ['m', 'm'], 'square meter']}}
     
+TEST_DICT_4 = {'base_types': ['length', 'mass', 'time', 'area'],
+               'length': {'_base': 'm', 
+                        'm': [1.0, 'length', 'meter'],
+                        'mm': [0.001, 'm', 'millimeter']},
+               'mass': {'_base': 'kg', 
+                        'kg': [1.0, 'mass', 'kilogram']},
+               'time': {'_base': 's', 
+                        's': [1.0, 'time', 'second']},
+               'force': {'_base': 'N', 
+                        'N': [1.0, ['kg', 'm', '-s', '-s'], 'newton']}}
 
 class Test_Units(unittest.TestCase):
     
@@ -106,3 +116,12 @@ class Test_Units(unittest.TestCase):
         u = b['mm']
         self.assertEqual(u.value, 0.001)
         self.assertEqual(u.abbr, 'mm')
+        
+    def test_str_spec(self):
+        b = base.Units(raw=TEST_DICT_4)
+        N_p_mm = b.N / b.mm
+        self.assertEqual(N_p_mm.value, 1000.0)
+        self.assertEqual(N_p_mm.abbr, None)
+        self.assertEqual(N_p_mm.spec, [10, -6])
+        s = b.str_spec(N_p_mm.spec)
+        self.assertEqual(s, 'N/mm')
