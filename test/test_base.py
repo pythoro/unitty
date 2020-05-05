@@ -104,7 +104,7 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(u.value, 0.001)
         self.assertEqual(u.abbr, 'mm')
 
-    def test_spec(self):
+    def test_spec_mm(self):
         b = base.Units(raw=TEST_DICT_2)
         u = b.mm
         self.assertEqual(u.value, 0.001)        
@@ -120,8 +120,10 @@ class Test_Units(unittest.TestCase):
     def test_str_spec(self):
         b = base.Units(raw=TEST_DICT_4)
         N_p_mm = b.N / b.mm
+        ind_N = b.N.spec[0]
+        ind_mm = b.mm.spec[0]
         self.assertEqual(N_p_mm.value, 1000.0)
         self.assertEqual(N_p_mm.abbr, None)
-        self.assertEqual(N_p_mm.spec, [10, -6])
+        self.assertEqual(N_p_mm.spec, [ind_N, -ind_mm])
         s = b.str_spec(N_p_mm.spec)
         self.assertEqual(s, 'N/mm')
