@@ -107,3 +107,24 @@ class Test_Quantity(unittest.TestCase):
                      abbr='mm', name='millimeter')
         q = 5 >> q1
         self.assertEqual(q, 5000)
+        
+    def test_non_unity_div(self):
+        vector = np.zeros(8, dtype=np.uint8)
+        vector[2] = 1.0
+        q1 = Quantity(value=1.7, spec=[1], vector=vector,
+                     abbr='s', name='meter')
+        q2 = Quantity(value=0.0254*12, spec=[3], vector=self.vector,
+                     abbr='ft', name='ft')
+        q = q1 / q2
+        self.assertEqual(q.value, (1.7)/(0.0254*12)) # 5.57742782152231
+        
+    def test_non_unity_div(self):
+        vector = np.zeros(8, dtype=np.uint8)
+        vector[2] = 1.0
+        q1 = Quantity(value=1.7, spec=[1], vector=vector,
+                     abbr='s', name='meter')
+        q2 = Quantity(value=0.0254*12, spec=[3], vector=self.vector,
+                     abbr='ft', name='ft')
+        q = q1 * q2
+        self.assertEqual(q.value, (1.7)*(0.0254*12)) # 0.51816
+
