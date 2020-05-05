@@ -127,3 +127,10 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(N_p_mm.spec, [ind_N, -ind_mm])
         s = b.str_spec(N_p_mm.spec)
         self.assertEqual(s, 'N/mm')
+        
+    def test_derive(self):
+        b = base.Units(raw=TEST_DICT_4)
+        spec = ['N', '-mm']
+        val, vec = b._derive(spec)
+        print(val)
+        print(vec)

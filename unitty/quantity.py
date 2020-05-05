@@ -5,21 +5,8 @@ Created on Fri May  1 11:52:26 2020
 @author: Reuben
 """
 
-from . import settings
+from . import settings, get_units, get_systems
 import numpy as np
-
-systems = None
-
-def set_systems(sys):
-    global systems
-    systems = sys
-
-units = None
-
-def set_units(u):
-    global units
-    units = u
-
 
 class Quantity():
     def __init__(self, value, spec, vector, abbr=None, name=None):
@@ -46,20 +33,20 @@ class Quantity():
         else:
             spec = self.spec
             value = self.value
-        value = systems.unitise_typed(value, spec)
+        value = get_systems().unitise_typed(value, spec)
         return value, spec
 
     def in_units(self, unit=None):
         return self._to_str(*self._in_units(unit))
 
     def _unitise(self):
-        return systems.unitise(self.value, self.spec)
+        return get_systems().unitise(self.value, self.spec)
 
     def unitise(self):
         return self._to_str(*self._unitise())
 
     def _base_unitise(self):
-        return systems.base_unitise(self.value, self.vector)
+        return get_systems().base_unitise(self.value, self.vector)
     
     def base_unitise(self):
         return self._to_str(*self._base_unitise())
@@ -69,7 +56,7 @@ class Quantity():
             f = str(value)
         else:
             f = '{:0.6g}'.format(value)
-        return f + ' ' + units.str_spec(spec)
+        return f + ' ' + get_units().str_spec(spec)
     
     def __str__(self):
         return self.unitise()

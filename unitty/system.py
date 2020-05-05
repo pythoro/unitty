@@ -9,25 +9,25 @@ import os
 import ruamel.yaml as yaml
 import numpy as np
 import pprint
-from . import base
+from . import get_units
 
 root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Systems():
-    def __init__(self, fname=None):
-        self.load(fname)
+    def __init__(self, fname=None, raw=None):
+        if fname is None and raw is None:
+            fname = os.path.join(root, 'systems') + '.yaml'
+        raw = self._load_raw(fname) if raw is None else raw
+        self.load(raw)
     
-    def load(self, fname=None):
-        raw = self._load_raw(fname)
+    def load(self, raw):
         self._sys_dct = self._make_sys_dct(raw)
         for name in self._sys_dct.keys():
             self._active = name
             break
 
-    def _load_raw(self, fname=None):
-        if fname is None:
-            fname = os.path.join(root, 'systems') + '.yaml'
+    def _load_raw(self, fname):
         with open(fname, 'r') as f:
             raw = yaml.safe_load(f)
         return raw
@@ -53,8 +53,8 @@ class Systems():
 
 
 class System():
-    def __init__(self, dct, units=None):
-        self._units = units if units is not None else base.units
+    def __init__(self, dct):
+        self._units = get_units()
         self._sys_dct = self._make_sys_dct(dct)
     
     def __str__(self):
@@ -153,8 +153,3 @@ class System():
             out /= self._units.get_by_index(u).value
         return out
     
-
-systems = Systems()        
-active = systems.active
-set_system = systems.set_system
-

@@ -16,12 +16,11 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Units():
-    _autoload = True
-    
     def __init__(self, fname=None, raw=None):
-        if self._autoload or fname is not None or raw is not None:
-            raw = self._load_raw(fname) if raw is None else raw
-            self.load(raw)
+        if fname is None and raw is None:
+            fname = os.path.join(root, 'units') + '.yaml'
+        raw = self._load_raw(fname) if raw is None else raw
+        self.load(raw)
     
     def _ind(self, s):
         if s in self._ind_dct:
@@ -73,9 +72,7 @@ class Units():
         self._clear()
         self._make_type_dct(dct)
     
-    def _load_raw(self, fname=None):
-        if fname is None:
-            fname = os.path.join(root, 'units') + '.yaml'
+    def _load_raw(self, fname):
         with open(fname, 'r') as f:
             raw = yaml.safe_load(f)
         return raw
@@ -157,7 +154,6 @@ class Units():
         else:
             return s_num + '/(' + '.'.join(den) + ')'
 
-units = Units()
 
 
         

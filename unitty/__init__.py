@@ -9,19 +9,29 @@ settings = {
         'always_make_quantities': False
         }
 
+units = None
+systems = None
+
+def get_units():
+    return units
+
+def get_systems():
+    return systems
+
+def get_system():
+    return systems.active
+
 from . import base
 from . import system
 from . import quantity
 from . import unit
 
-def init():
-    global initialised, base
-    quantity.set_systems(system.systems)
-    quantity.set_units(base.units)
-    initialised = True
+def setup(units_fname=None, units_raw=None, sys_fname=None, sys_raw=None):
+    global units, systems
+    units = base.Units(fname=units_fname, raw=units_raw)
+    systems = system.Systems(fname=sys_fname, raw=sys_raw)
+    return units, systems
     
-init()
+setup()
 
-units = base.units
-set_system = system.set_system
-
+    
