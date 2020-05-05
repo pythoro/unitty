@@ -90,12 +90,38 @@ class Units():
         return value, vector
         
     def _make_unit(self, units, utype, index, v):
-        value, derivation, name = v
+        if len(v) == 4:
+            value, derivation, name, dct = v
+        else:
+            dct = None
+            value, derivation, name = v
         if not isinstance(derivation, list):
             derivation = [derivation]
         m, vector = self._derive(derivation)
         spec = [index]
-        self.new(index, value * m, vector, spec, name, utype)
+        val = value * m
+        self.new(index, val, vector, spec, name, utype)
+        if dct is not None and 'SI_prefixes' in dct:
+            self._make_si_prefixed(dct, index, val, vector, spec, name, utype)
+    
+    def _make_si_prefixed(self, dct, index, val, vector, spec, name, utype):
+        names = ['yotta', 'zetta', 'exa', 'peta', 'tera', 'giga', 'mega',
+                 'kilo', 'hecto', 'deca', 'deci', 'centi', 'milli', 'micro',
+                 'nano', 'pico', 'femto', 'atto', 'zepto', 'yocto']
+        symbols = ['Y', 'Z', 'E', 'P', 'T', 'G', 'M', 'k', 'h', 'da', 'd',
+                   'c', 'm', 'u', 'n', 'p', 'f', 'a', 'z', 'y']
+        mults = [1.e+24, 1.e+21, 1.e+18, 1.e+15, 1.e+12, 1.e+09, 1.e+06, 1.e+03,
+                 1.e+02, 1.e+01, 1.e-01, 1.e-02, 1.e-03, 1.e-06, 1.e-09, 1.e-12,
+                 1.e-15, 1.e-18, 1.e-21, 1.e-24]
+        abbr = self.str(index)
+        for n, s, m in zip(names, symbols, mults):
+            if s not in dct['SI_prefixes']:
+                continue
+            prefixed = s + abbr
+            prefixed_name = n + name
+            i = self._ind(prefixed)
+            v = val * m
+            self.new(i, v, vector, spec, prefixed_name, utype)
     
     def _make_type_dct(self, dct):
         units = self.units

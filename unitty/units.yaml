@@ -9,15 +9,8 @@ base_types:
     - money
 length:
     _base: m
-    m: [1.0, length, meter]
-    # Metric
-    cm: [1e-2, m, centimeter]
-    mm: [1e-3, m, millimeter]
-    um: [1e-6, m, micrometer]
-    nm: [1e-9, m, nanometer]
-    pm: [1e-12, m, picometer]
-    fm: [1e-15, m, femptometer]
-    km: [1e3, m, kilometer]
+    # Metrix
+    m: [1.0, length, meter, {'SI_prefixes': ['p', 'n', 'u', 'm', 'c', 'k']}]
     # Imperial
     in: [2.54, cm, inch]
     ft: [12., in, foot]
@@ -27,30 +20,23 @@ length:
 area:
     _base: m2
     # Metric
-    m2: [1.0, [m, m], square meter]
-    mm2: [1.0, [mm, mm], square millimeters]
-    cm2: [1.0, [cm, cm], square centimeters]
-    km2: [1.0, [km, km], square kilometers]
+    m2: [1.0, [m, m], square meter, {'SI_prefixes': ['m', 'c', 'k']}]
     # Imperial
     in2: [1.0, [in, in], square inches]
     ft2: [1.0, [ft, ft], square feet]
     mi2: [1.0, [mi, mi], square miles]
 volume:
     _base: m3
-    m3: [1.0, [m, m, m], cubic meter]
+    m3: [1.0, [m, m, m], cubic meter, {'SI_prefixes': ['m', 'k']}]
     # Metric
-    L: [1e-3, m3, liter]
-    mL: [1e-3, L, milliliter]
-    kL: [1.0, m3, kiloliter]
+    L: [1e-3, m3, liter, {'SI_prefixes': ['u', 'm', 'c']}]
     # Imperial
     in3: [1.6387063998585427e-05, m3, cubic inches]
     ft3: [0.028316846592, m3, cubic feet]
 time:
     _base: s
     # Metric
-    s: [1.0, time, second]
-    ms: [1e-3, s, millisecond]
-    us: [1e-6, s, microsecond]
+    s: [1.0, time, second, {'SI_prefixes': ['p', 'n', 'u', 'm', 'c', 'k']}]
     min: [60, s, minute]
     hour: [60, min, hour]
     day: [24, hour, day]
@@ -58,9 +44,8 @@ time:
 mass:
     _base: kg
     # Metric
-    kg: [1.0, mass, kilogram]
-    g: [1e-3, kg, gram]
-    mg: [1e-6, kg, milligram]
+    g: [1e-3, mass, gram, {'SI_prefixes': ['p', 'n', 'u', 'm', 'c', 'k',
+                                           'M', 'G']}]
     tonne: [1e3, kg, tonne]
     # Imperial
     lbs: [0.45359237, kg, pound mass]
@@ -68,31 +53,25 @@ mass:
 force:
     _base: N
     # Metric
-    N: [1.0, [kg, m, -s, -s], newton]
-    mN: [1e-3, N, millinewton]
-    kN: [1e3, N, kilonewton]
+    N: [1.0, [kg, m, -s, -s], newton, {'SI_prefixes': ['m', 'k', 'M']}]
     # Imperial
     lbf: [4.4482216152605, N, pounds force]
     kip: [4448.2216, N, kip]
 energy: # and torque
     _base: J
     # Metric
-    J: [1.0, [N, m], joule]
-    Nm: [1.0, [N, m], newton meter]
-    kJ: [1e3, J, kilojoule]
+    J: [1.0, [N, m], joule, {'SI_prefixes': ['m', 'k', 'M']}]
+torque:
+    _base: Nm
+    Nm: [1.0, [N, m], newton meter, {'SI_prefixes': ['m', 'k', 'M']}]
 power:
     _base: W
     # Metric
-    W: [1.0, [J, -s], watt]
-    kW: [1e3, W, kilowatt]
+    W: [1.0, [J, -s], watt, {'SI_prefixes': ['m', 'k', 'M']}]
 pressure:
     _base: Pa
     # Metric
-    Pa: [1.0, [N, -m, -m], pascal]
-    hPa: [1e2, Pa, hectopascal]
-    kPa: [1e3, Pa, kilopascal]
-    MPa: [1e6, Pa, megapascal]
-    GPa: [1e9, Pa, gigapascal]
+    Pa: [1.0, [N, -m, -m], pascal, {'SI_prefixes': ['m', 'h', 'k', 'M', 'G']}]
     bar: [1e5, Pa, bar]
     mbar: [1e-3, bar, millibar]
     atm: [101325, Pa, atmosphere]
@@ -103,14 +82,14 @@ pressure:
 density:
     _base: kgm3
     # Metric
-    kgm3: [1.0, [kg, -m, -m, -m], kilograms per cubic meter]
-    gm3: [1.0, [g, -m, -m, -m], grams per cubic meter]
+    gm3: [1.0, [g, -m, -m, -m],
+            kilograms per cubic meter, {'SI_prefixes': ['m', 'k']}]
     # Imperial
     pcf: [16.01846337396, kgm3, pounds mass per cubic foot]
 speed:
     _base: mps
     # Imperial
-    mps: [1.0, [m, -s], meters per second]
+    mps: [1.0, [m, -s], meters per second, {'SI_prefixes': ['k']}]
     kph: [1.0, [km, -hour], kilometers per hour]
     mph: [1.0, [mi, -hour], miles per hour]
 temperature:
