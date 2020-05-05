@@ -27,6 +27,11 @@ def get_system(name=None):
 def get_active():
     return active
 
+def set_system(sys_name, name=None):
+    name = active if name is None else name
+    systems = get_systems(name)
+    systems.set_active(sys_name)
+
 from . import base
 from . import system
 from . import quantity

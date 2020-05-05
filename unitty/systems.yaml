@@ -12,5 +12,19 @@ metric:
     power: [W, kW, MW, GW]
     force: [mN, N, kN]
     temperature: [K]
-imperial:
-    length: [in, [3, ft]]
+US:
+    length: [in, [3, ft], mi]
+    area: [in2, ft2, mi2]
+    volume: [USfloz, USgal]
+    mass: [oz, lbs, ton]
+    pressure: [psf, psi, ksi]
+    energy: [mJ, J, kJ]
+    torque: [ft_lb]
+    density: [pcf]
+    time: [us, ms, s]
+    speed: [mph, fps]
+    power: [W]
+    force: [lbf]
+    temperature: [K]
+
+    

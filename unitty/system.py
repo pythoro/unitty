@@ -35,7 +35,7 @@ class Systems():
     def _make_sys_dct(self, raw):
         return {n: System(dct) for n, dct in raw.items()}
     
-    def set_system(self, name):
+    def set_active(self, name):
         self._active = name
     
     @property

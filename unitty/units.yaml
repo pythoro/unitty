@@ -33,6 +33,11 @@ volume:
     # Imperial
     in3: [1.6387063998585427e-05, m3, cubic inches]
     ft3: [0.028316846592, m3, cubic feet]
+    floz: [28.41, mL, imperial fluid ounce]
+    USfloz: [29.57375, mL, US fluid ounce]
+    UScup: [8, USfloz, US cup]
+    gal: [4.546, L, imperial gallon]
+    USgal: [3.785, L, US gallon]
 time:
     _base: s
     # Metric
@@ -48,8 +53,9 @@ mass:
                                            'M', 'G']}]
     tonne: [1e3, kg, tonne]
     # Imperial
+    oz: [0.028349523125, g, ounce mass]
     lbs: [0.45359237, kg, pound mass]
-    ton: [2240, lbs, ton]
+    ton: [2000, lbs, US ton]
 force:
     _base: N
     # Metric
@@ -64,6 +70,8 @@ energy: # and torque
 torque:
     _base: Nm
     Nm: [1.0, [N, m], newton meter, {'SI_prefixes': ['m', 'k', 'M']}]
+    # Imperial
+    ft_lb: [1.0, [ft, lbf], newton meter]
 power:
     _base: W
     # Metric
@@ -91,6 +99,7 @@ speed:
     # Imperial
     mps: [1.0, [m, -s], meters per second, {'SI_prefixes': ['k']}]
     kph: [1.0, [km, -hour], kilometers per hour]
+    fps: [1.0, [ft, -s], feet per second]
     mph: [1.0, [mi, -hour], miles per hour]
 temperature:
     _base: K
