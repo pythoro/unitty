@@ -118,6 +118,13 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(u.value, 0.001)
         self.assertEqual(u.abbr, 'mm')
         
+    def test_get_by_index(self):
+        b = base.Units(raw=TEST_DICT_2)
+        ret = b.get_by_index(2)
+        self.assertEqual(ret, b.m)
+        ret = b.get_by_index(-3)
+        self.assertEqual(ret, b['-mm'])
+        
     def test_str_spec(self):
         b = base.Units(raw=TEST_DICT_4)
         N_p_mm = b.N / b.mm
