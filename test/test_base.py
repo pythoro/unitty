@@ -7,6 +7,7 @@ Created on Tue May  5 09:46:59 2020
 
 import unittest
 from unitty import base
+import numpy as np
 
 TEST_DICT_1 = {'base_types': ['length'],
                'length': {'_base': 'm', 
@@ -132,5 +133,5 @@ class Test_Units(unittest.TestCase):
         b = base.Units(raw=TEST_DICT_4)
         spec = ['N', '-mm']
         val, vec = b._derive(spec)
-        print(val)
-        print(vec)
+        self.assertEqual(val, 1000.0)
+        self.assertTrue(np.allclose(vec, [0, 1, -2, 0]))
