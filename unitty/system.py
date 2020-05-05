@@ -92,11 +92,11 @@ class System():
                 utypes.extend([-i]*int(abs(n)))
         return utypes
 
-    def _unitise_one(self, val, spec):
-        if abs(spec) not in self._sys_dct:
-            return val, spec
-        d = self._sys_dct[abs(spec)]
-        div = spec < 0
+    def _unitise_one(self, val, utype):
+        if abs(utype) not in self._sys_dct:
+            return val, utype
+        d = self._sys_dct[abs(utype)]
+        div = utype < 0
         trials = []
         i_vals = []
         for i, mult in d.items():
@@ -112,7 +112,7 @@ class System():
             den = np.mean(10/np.abs(np.atleast_1d(v)))
             a.append(np.max((num, den)))
         ind = a.index(min(a))
-        return trials[ind], i_vals[ind]
+        return i_vals[ind]
 
     def _base_unitise_one(self, val, spec):
         div = False
@@ -133,8 +133,9 @@ class System():
         out_spec = []
         utypes = self._units._utypes
         utype = [utypes[s] for s in spec]
-        for u in utype:
-            new_val, ut = self._unitise_one(new_val, u)
+        for u, s in zip(utype, spec):
+            ut = self._unitise_one(new_val, u)
+            new_val = new_val / self._units.get_by_index(ut).value
             out_spec.append(ut)
         return new_val, out_spec
     
