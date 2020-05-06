@@ -200,3 +200,12 @@ class Test_Units(unittest.TestCase):
         check = b.str_spec(spec)
         self.assertEqual(s, check)
         
+    def test_from_str(self):
+        b = base.Units(raw=TEST_DICT_4)
+        n_current = len(b.units)
+        s = 'm/s2'
+        unit = b.from_str(s)
+        self.assertEqual(unit.abbr, 'm/s2')
+        self.assertTrue(unit.abbr, b.units)
+        self.assertEqual(len(b.units), n_current + 2)
+        

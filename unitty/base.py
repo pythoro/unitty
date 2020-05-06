@@ -246,10 +246,16 @@ class Units():
         den_lst = [-s for s in den_lst]
         return num_lst + den_lst
 
-
-
-        
-
-
+    def from_str(self, s):
+        if s in self.units:
+            return self.units[s]
+        spec = self.spec_from_str(s)
+        index = self._ind(s)
+        value = 1.0
+        units = [self.get_by_index(i) for i in spec]
+        vector = np.sum([u.vector for u in units], axis=0)
+        name = s
+        utype = 0
+        return self.new(index, value, vector, spec, name, utype)
         
     
