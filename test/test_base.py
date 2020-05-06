@@ -223,10 +223,10 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(unit.abbr, s)
         self.assertAlmostEqual(unit.value, (12*0.0254) / (0.45359237))
 
-    def test_getattr_with_qid(self):
+    def test_getattr_with_ref(self):
         b = base.Units(raw=TEST_DICT_5)
-        qid = 'test_qid'
+        ref = 'test_ref'
         s = 'ft/lbs'
-        unit = b[s, qid]
+        unit = b[s, ref]
         self.assertEqual(unit.abbr, s)
-        self.assertEqual(unit._qid, qid)
+        self.assertEqual(unit._ref, ref)

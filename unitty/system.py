@@ -16,7 +16,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 class Systems():
     def __init__(self, fname=None, raw=None):
-        self._qids = {}
+        self.refs = {}
         self._units = get_units(get_active())
         if fname is None and raw is None:
             fname = os.path.join(root, 'systems') + '.yaml'
@@ -53,7 +53,7 @@ class Systems():
     def unitise_typed(self, val, spec):
         return self._sys_dct[self._active].unitise_typed(val, spec)
 
-    def set_qids(self, source):
+    def set_refs(self, source):
         if isinstance(source, str):
             if source.endswith('.csv'):
                 data = np.genfromtxt(source, delimiter=',', dtype='str')
@@ -64,10 +64,10 @@ class Systems():
                     dct[row[0]] = {k: v for k, v in zip(headers[1:], row[1:])}
         elif isinstance(source, dict):
             dct = source
-        self._qids = dct
+        self._refs = dct
         
-    def by_qid(self, val, qid):
-        unit_str = self._qids[qid][self._active]
+    def by_ref(self, val, ref):
+        unit_str = self._refs[ref][self._active]
         u = self._units[unit_str]
         value = val / u.value
         return value, unit_str

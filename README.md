@@ -107,6 +107,9 @@ q = 5 << u.lbs / u.ft2
 q
 # 24.4121 kg/m2
 
+# Alternatively:
+q = 5 << u['lbs/ft2']
+
 val, s = q.in_sys()
 val
 # 24.4121
@@ -216,7 +219,7 @@ If we have many such quantities, we can do this automatically. We can define
 some named quantity types in a csv file, like this one that we'll
 call `example.csv':
 
-| qid           | metric      | US         |
+| ref           | metric      | US         |
 | ------------- | ----------- | ---------- |
 | widget_length | mm          | in         |
 | complex.value | kg.s2/m     | lbs.s2/ft  |
@@ -226,7 +229,7 @@ Then we apply it like this:
 ```python
 
 s = unitty.get_systems() # The object that looks after different unit systems
-s.set_qids('example.csv')
+s.set_refs('example.csv')
 
 ```
 
@@ -234,11 +237,12 @@ Now we can name the quantity types like this:
 
 ```python
 
-q2.set_qid('complex.value')
+q2.set_ref('complex.value')
 
 ```
 
-A shorthand way is to add the 'qid' (quantity type id) when getting the unit:
+A shorthand way is to add the 'ref' (quantity reference) when getting
+the unit:
 
 ```python
 
