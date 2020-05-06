@@ -12,6 +12,8 @@ metric:
     power: [W, kW, MW, GW]
     force: [mN, N, kN]
     temperature: [K]
+    current: [A]
+    substance: [mol]
 US:
     length: [in, [3, ft], mi]
     area: [in2, ft2, mi2]
@@ -26,5 +28,6 @@ US:
     power: [W]
     force: [lbf]
     temperature: [K]
-
+    current: [A]
+    substance: [mol]
     

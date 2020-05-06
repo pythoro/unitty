@@ -128,8 +128,10 @@ class Units():
         for utype_str, d in dct.items():
             if utype_str=='base_types':
                 self._make_utypes(d)
+                present = {k: False for k in self._utypes.keys() if k > 0}
                 continue
             utype = self._ind(utype_str)
+            present[utype] = True
             for abbr_str, v in d.items():
                 if abbr_str == '_base':
                     # Set the base for the utype
@@ -137,6 +139,12 @@ class Units():
                 else:
                     index = self._ind(abbr_str)
                     self._make_unit(units, utype, index, v)
+        if not all(present.values()):
+            for k, v in present.items():
+                if v is not True:
+                    break
+            raise ValueError('Type ' + self.str(k) 
+                    + ' missing from specification.')
 
     def __getitem__(self, abbr):
         if abbr in self.units:

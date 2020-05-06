@@ -24,7 +24,7 @@ TEST_DICT_3 = {'base_types': ['length', 'area'],
                'area': {'_base': 'm2', 
                         'm2': [1.0, ['m', 'm'], 'square meter']}}
     
-TEST_DICT_4 = {'base_types': ['length', 'mass', 'time', 'area'],
+TEST_DICT_4 = {'base_types': ['length', 'mass', 'time', 'force'],
                'length': {'_base': 'm', 
                         'm': [1.0, 'length', 'meter'],
                         'mm': [0.001, 'm', 'millimeter']},

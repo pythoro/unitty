@@ -46,6 +46,9 @@ time:
     hour: [60, min, hour]
     day: [24, hour, day]
     yr: [365, day, year]
+current:
+    _base: A
+    A: [1.0, current, ampere]
 mass:
     _base: kg
     # Metric
@@ -105,3 +108,12 @@ speed:
 temperature:
     _base: K
     K: [1.0, temperature, kelvin]
+substance:
+    _base: mol
+    mol: [1.0, substance, mole]
+luminosity:
+    _base: cd
+    cd: [1.0, luminosity, candela]
+money:
+    _base: USD
+    USD: [1.0, money, US dollar]
