@@ -39,41 +39,41 @@ class Test_Systems(unittest.TestCase):
         q = 7 << u.ft / u.lbs
         self.assertAlmostEqual(q.value, 7 * (12*0.0254) / 0.45359237) # 4.703782825976547
 
-    def test_quantity_unitise(self):
+    def test_quantity_in_sys(self):
         unitty.setup('test', units_raw=TEST_DICT_5, sys_raw=TEST_SYSTEMS_1)
         u = unitty.get_units('test')
         q = 7 << u.ft / u.lbs
-        val, spec = q._unitise()
+        val, spec = q.in_sys()
         self.assertAlmostEqual(val, 4.703782825976547)
-        self.assertListEqual(spec, [3, -7])
+        self.assertEqual(spec, 'm/kg')
         
-    def test_quantity_unitise_switch(self):
+    def test_quantity_in_sys_switch(self):
         unitty.setup('test', units_raw=TEST_DICT_5, sys_raw=TEST_SYSTEMS_1)
         u = unitty.get_units('test')
         q = 7 << u.ft / u.lbs
         unitty.set_system('US')
-        val, spec = q._unitise()
+        val, spec = q.in_sys()
         self.assertEqual(val, 7)
-        self.assertListEqual(spec, [6, -8])
+        self.assertEqual(spec, 'ft/lbs')
     
     def _round_trip(self, name):
         u = unitty.get_units(name)
         q = 2 << u.m / u.kg
-        val, spec = q._unitise()
+        val, spec = q.in_sys()
         expected = 2
         self.assertAlmostEqual(expected, val)
         unitty.set_system('US')
-        val, spec = q._unitise()
+        val, spec = q.in_sys()
         self.assertAlmostEqual(2.0, q.value)
         expected = 2 * (1/(12*0.0254)) / (1/0.45359237) # 2.976327887139108
         self.assertAlmostEqual(expected, val)
         q2 = val << u.ft / u.lbs
-        val2, spec2 = q2._unitise()
+        val2, spec2 = q2.in_sys()
         self.assertAlmostEqual(2.0, q2.value)
         expected2 = 2 * (1/(12*0.0254)) / (1/0.45359237) # 2.976327887139108
         self.assertAlmostEqual(expected2, val2)
         unitty.set_system('metric')
-        val3, spec3 = q2._unitise()
+        val3, spec3 = q2.in_sys()
         self.assertAlmostEqual(2.0, val3)
         
     

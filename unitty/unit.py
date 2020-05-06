@@ -9,7 +9,7 @@ from .quantity import Quantity
 
 class Unit(Quantity):
     def __str__(self):
-        return self.base_unitise()
+        return self.str_in_base()
 
 
 

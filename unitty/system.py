@@ -137,7 +137,8 @@ class System():
             ut = self._unitise_one(new_val, u)
             new_val = new_val / self._units.get_by_index(ut).value
             out_spec.append(ut)
-        return new_val, out_spec
+        s = self._units.str_spec(out_spec)
+        return new_val, s
     
     def base_unitise(self, val, vector):
         base_spec = self.calc_utypes(vector)
@@ -146,11 +147,13 @@ class System():
         for u in base_spec:
             new_val, ut = self._base_unitise_one(new_val, u)
             spec.append(ut)
-        return new_val, spec
+        s = self._units.str_spec(spec)
+        return new_val, s
     
     def unitise_typed(self, val, spec):
         out = val
         for u in spec:
             out /= self._units.get_by_index(u).value
-        return out
+        s = self._units.str_spec(spec)
+        return out, s
     

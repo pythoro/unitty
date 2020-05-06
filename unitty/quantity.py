@@ -8,6 +8,10 @@ Created on Fri May  1 11:52:26 2020
 from . import settings, get_active, get_units, get_systems
 import numpy as np
 
+from collections import namedtuple
+
+Quantity_Tuple = namedtuple('Quantity_Tuple', ['value', 'units'])
+
 class Quantity():
     def __init__(self, value, spec, vector, abbr=None, name=None,
                  parent=None):
@@ -18,53 +22,52 @@ class Quantity():
         self.name = name
         self._parent = get_active() if parent is None else parent
         
-    def set_unit(self, unit):
+    def set_units(self, unit):
         if any(unit.vector != self.vector):
             raise ValueError('Incompatible quantity type')
         self.spec = unit.spec
-        self.value = self.value * unit.value
         self.abbr = unit.abbr if unit.abbr is not None else None
         self.name = unit.name if unit.name is not None else None
                 
-    def _in_units(self, unit=None):
+    def in_units(self, unit=None):
         if unit is not None:
-            if unit.vector != self.vector:
+            if any(unit.vector != self.vector):
                 raise ValueError('Incompatible quantity type')
             spec = unit.spec
-            value = self.value * unit.value
         else:
             spec = self.spec
-            value = self.value
-        value = get_systems(self._parent).unitise_typed(value, spec)
-        return value, spec
+        tup = get_systems(self._parent).unitise_typed(self.value, spec)
+        return Quantity_Tuple(*tup)
 
-    def in_units(self, unit=None):
-        return self._to_str(*self._in_units(unit))
+    def str_in_units(self, unit=None):
+        return self._to_str(*self.in_units(unit))
 
-    def _unitise(self):
-        return get_systems(self._parent).unitise(self.value, self.spec)
+    def in_sys(self):
+        tup = get_systems(self._parent).unitise(self.value, self.spec)
+        return Quantity_Tuple(*tup)
 
-    def unitise(self):
-        return self._to_str(*self._unitise())
+    def str_in_sys(self):
+        return self._to_str(*self.in_sys())
 
-    def _base_unitise(self):
-        return get_systems(self._parent).base_unitise(self.value, self.vector)
-    
-    def base_unitise(self):
-        return self._to_str(*self._base_unitise())
+    def in_base(self):
+        tup = get_systems(self._parent).base_unitise(self.value, self.vector)
+        return Quantity_Tuple(*tup)
+
+    def str_in_base(self):
+        return self._to_str(*self.in_base())
     
     def _to_str(self, value, spec):
         if isinstance(value, np.ndarray):
             f = str(value)
         else:
             f = '{:0.6g}'.format(value)
-        return f + ' ' + get_units(self._parent).str_spec(spec)
+        return f + ' ' + spec
     
     def __str__(self):
-        return self.unitise()
+        return self.str_in_sys()
     
     def __repr__(self):
-        return self.__str__()
+        return self.str_in_sys()
 
     def _get_quantity(self, quantity, value, spec, vector):
         if settings['always_make_quantities']:

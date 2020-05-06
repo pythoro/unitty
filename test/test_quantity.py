@@ -24,19 +24,19 @@ class Test_Quantity(unittest.TestCase):
         self.assertEqual(q.abbr, 'm')
         self.assertEqual(q.name, 'meter')
         
-    def test_set_unit_valid(self):
+    def test_set_units_valid(self):
         q = Quantity(value=1.0, spec=[3], vector=self.vector,
                      abbr='m', name='meter')
         q2 = Quantity(value=0.001, spec=[8], vector=self.vector,
                      abbr='mm', name='millimeter')
-        q.set_unit(q2)
-        self.assertEqual(q.value, 0.001)
+        q.set_units(q2)
+        self.assertEqual(q.value, 1.0)
         self.assertSequenceEqual(q.spec, [8])
         self.assertTrue(np.allclose(self.vector, q.vector))
         self.assertEqual(q.abbr, 'mm')
         self.assertEqual(q.name, 'millimeter')
         
-    def test_set_unit_invalid(self):
+    def test_set_units_invalid(self):
         q = Quantity(value=1.0, spec=[3], vector=self.vector,
                      abbr='m', name='meter')
         v2 = self.vector.copy()
@@ -44,7 +44,7 @@ class Test_Quantity(unittest.TestCase):
         q2 = Quantity(value=0.001, spec=[8], vector=v2,
                      abbr='other', name='other')
         with self.assertRaises(ValueError):
-            q.set_unit(q2)
+            q.set_units(q2)
 
     def test_quantity_multiply(self):
         q1 = Quantity(value=0.001, spec=[3], vector=self.vector,
@@ -118,7 +118,7 @@ class Test_Quantity(unittest.TestCase):
         q = q1 / q2
         self.assertEqual(q.value, (1.7)/(0.0254*12)) # 5.57742782152231
         
-    def test_non_unity_div(self):
+    def test_non_unity_div_2(self):
         vector = np.zeros(8, dtype=np.uint8)
         vector[2] = 1.0
         q1 = Quantity(value=1.7, spec=[1], vector=vector,
