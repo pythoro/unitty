@@ -46,6 +46,34 @@ u = unitty.get_units()
 
 ```
 
+### Getting units
+
+`unitty` supports attribute and string methods to get units.
+
+```python
+
+u.kg
+# 1 kg
+
+u['kg']
+```
+
+Strings can be complex, like this:
+
+```python
+
+u['kg/(s2.m)']
+
+```
+
+There are a few rules to formatting the strings:
+* Use only one divide symbol ('/')
+* Use only one pair of brackets in the dividend, if needed
+* Use a period ('.') to signify multiplication
+* Do not include an exponent symbol ('^'). For example, for square meters,
+write 'm2'.
+
+
 ### Basic calculations
 
 Use the units to get an input into a base unit system:
@@ -166,19 +194,79 @@ q2
 
 ```
 
-### Unit display
+### Named quantity types
 
 Notice that in the above, q2 displays in different units. That's because by
 default, it guesses the best available combination of units in the unit system
-to display in a friendly way. Sometimes, we want to set the units, so we can
-do this:
+to display in a friendly way. Often, though, there are particular units
+we want to display in, which depend on the unit system we want to us. 
+For one-off cases, we can do this:
 
 ```python
 
-q2
-0.34177 kg/cm2
+val, s = q2.in_units(u['kg/m2'])
+val
+# 34.17699345
+s
+# 'kg/m2'
 
 ```
+
+If we have many such quantities, we can do this automatically. We can define
+some named quantity types in a csv file, like this one that we'll
+call `example.csv':
+
+| qid           | metric      | US         |
+| ------------- | ----------- | ---------- |
+| widget_length | mm          | in         |
+| complex.value | kg.s2/m     | lbs.s2/ft  |
+
+Then we apply it like this:
+
+```python
+
+s = unitty.get_systems() # The object that looks after different unit systems
+s.set_qids('example.csv')
+
+```
+
+Now we can name the quantity types like this:
+
+```python
+
+q2.set_qid('complex.value')
+
+```
+
+A shorthand way is to add the 'qid' (quantity type id) when getting the unit:
+
+```python
+
+q2 = 7 << u['lbs/ft2', 'complex.value']
+
+```
+
+Now, the display of the unit automaticallymatches the units we've specified.
+
+
+```python
+
+unitty.set_system('US')
+q2
+# 7 lbs/ft2
+
+unitty.set_system('metric')
+q2
+# 34.17699345 kg/(m2)
+
+val, s = q.in_sys()
+val
+# 34.17699345
+s
+# kg/(m2)
+
+```
+
 
 
 ## Alternatives
