@@ -36,6 +36,7 @@ from . import base
 from . import system
 from . import quantity
 from . import unit
+from . import utils
 
 def setup(name, units_fname=None, units_raw=None, sys_fname=None, sys_raw=None):
     global active
