@@ -164,3 +164,39 @@ class Test_Units(unittest.TestCase):
         val, vec = b._derive(spec)
         self.assertEqual(val, 1000.0)
         self.assertTrue(np.allclose(vec, [0, 1, -2, 0]))
+
+    def test_spec_from_str_1(self):
+        b = base.Units(raw=TEST_DICT_4)
+        s = 'kg'
+        spec = b.spec_from_str(s)
+        check = b.str_spec(spec)
+        self.assertEqual(s, check)
+        
+    def test_spec_from_str_2(self):
+        b = base.Units(raw=TEST_DICT_4)
+        s = 'N/kg'
+        spec = b.spec_from_str(s)
+        check = b.str_spec(spec)
+        self.assertEqual(s, check)
+        
+    def test_spec_from_str_3(self):
+        b = base.Units(raw=TEST_DICT_4)
+        s = '1/kg'
+        spec = b.spec_from_str(s)
+        check = b.str_spec(spec)
+        self.assertEqual(s, check)
+        
+    def test_spec_from_str_4(self):
+        b = base.Units(raw=TEST_DICT_4)
+        s = 's/(kg.m)'
+        spec = b.spec_from_str(s)
+        check = b.str_spec(spec)
+        self.assertEqual(s, check)
+        
+    def test_spec_from_str_5(self):
+        b = base.Units(raw=TEST_DICT_4)
+        s = 's2'
+        spec = b.spec_from_str(s)
+        check = b.str_spec(spec)
+        self.assertEqual(s, check)
+        

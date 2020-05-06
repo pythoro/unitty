@@ -188,6 +188,67 @@ class Units():
         else:
             return s_num + '/(' + '.'.join(den) + ')'
 
+    def spec_from_str(self, s, sep=','):
+        if s is None or s in ['', 'dimensionless']:
+            return []
+        slash_count = s.count('/')
+        open_bracket_count = s.count('(')
+        close_bracket_count = s.count(')')
+        if s.count('-') > 0:
+            raise ValueError('Unit string  "' + str(s) + '" invalid: ' +
+                             'negatives are not allowed.')
+        if s.count('^') > 0:
+            raise ValueError('Unit string  "' + str(s) + '" invalid: ' +
+                             'power symbols ("^") should be omitted.')
+        if open_bracket_count != close_bracket_count:
+            raise ValueError('Unit string  "' + str(s) + '" does not have ' +
+                             'a matching number of open and close brackets.')
+        if open_bracket_count > 1:
+            raise ValueError('Unit string  "' + str(s) + '" invalid. Only ' +
+                             'one set of brackets in the denominator is ' +
+                             'allowed.')
+        if slash_count > 1:
+            raise ValueError('Unit string "' + str(s) + '" is invalid. They ' +
+                             'can have at most one divide symbol.')
+        elif slash_count == 1:
+            num, den = s.split('/')
+            num = num.strip(' ()')
+            den = den.strip(' ()')
+        else:
+            num = s.strip(' ()')
+            den = ''
+        if num in ['1', '1.0']:
+            num = ''
+            
+        def process(st):
+            if len(st) == 0:
+                return []
+            out = []
+            st = st.replace(' ', '.')
+            lst = st.split('.')
+            for item in lst:
+                if item in self._ind_dct:
+                    out.append(self._ind_dct[item])
+                    continue
+                n = 1
+                if item[-1].isnumeric():
+                    n = int(item[-1])
+                    item = item[:-1]
+                if item in self._ind_dct:
+                    for i in range(n):
+                        out.append(self._ind_dct[item])
+                    continue
+                raise ValueError('Unit "' + str(item) + '" not recognised.')
+            return out
+
+        num_lst = process(num)
+        den_lst = process(den)
+        den_lst = [-s for s in den_lst]
+        return num_lst + den_lst
+
+
+
+        
 
 
         
