@@ -37,7 +37,7 @@ to and from values in SI base units. Since SI base units all have magnitudes of
 
 ## Quick start
 
-Load the default units:
+Load the default units and unit systems:
 
 ```python
 
@@ -46,7 +46,7 @@ u = unitty.get_units()
 
 ```
 
-### Calculations
+### Basic calculations
 
 Use the units to get an input into a base unit system:
 
@@ -69,7 +69,7 @@ v2
 This gives 24.4121, which is in kg/m^2 (we'll omit power symbol and write this
 as 'kg/m2').
 
-### Quantities
+### Making quantities
 
 Now we'll create quantities like this:
 
@@ -84,10 +84,17 @@ val
 # 24.4121
 s
 # 'kg/m2'
+
+q.str_in_sys()
+# 24.4121 kg/m2
+
 ```
+
+### Switching unit systems
+
 The Quantity `q` displays as '24.4121 kg/m2', since it's a `Quantity` that
-includes unit information. Now, let's change our unit system and look at
-it again:
+includes unit information. Now, let's change our unit system to another
+preloaded one and look at it again:
 
 ```python
 
@@ -101,6 +108,9 @@ val
 s
 # 'lbs/ft2'
 
+q.str_in_sys()
+# 5 lbs/ft2
+
 ```
 
 Now, `q` shows as '5 lbs/ft2'. 
@@ -111,8 +121,14 @@ value, which we can see via:
 
 ```python
 
-q.in_base()
-# Quantity_Tuple(value=24.4121, units='kg/m2')
+val, s = q.in_base()
+val
+# 24.4121
+s
+# 'kg/m2'
+
+q.str_in_base()
+# 24.4121 kg/m2
 
 ```
 
@@ -150,9 +166,12 @@ q2
 
 ```
 
-Notice that q2 displays in different units. That's because it uses the
-best available combination of units in the unit system to display in a
-friendly way. Sometimes, we want to set the units, so we can do this:
+### Unit display
+
+Notice that in the above, q2 displays in different units. That's because by
+default, it guesses the best available combination of units in the unit system
+to display in a friendly way. Sometimes, we want to set the units, so we can
+do this:
 
 ```python
 
