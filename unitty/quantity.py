@@ -21,6 +21,7 @@ class Quantity():
         self.abbr = abbr
         self.name = name
         self._parent = get_active() if parent is None else parent
+        self._qid = None
         
     def set_units(self, unit):
         if any(unit.vector != self.vector):
@@ -29,6 +30,9 @@ class Quantity():
         self.abbr = unit.abbr if unit.abbr is not None else None
         self.name = unit.name if unit.name is not None else None
                 
+    def set_qid(self, qid):
+        self._qid = qid
+        
     def in_units(self, unit=None):
         if unit is not None:
             if any(unit.vector != self.vector):
@@ -42,8 +46,15 @@ class Quantity():
     def str_in_units(self, unit=None):
         return self._to_str(*self.in_units(unit))
 
+    def by_qid(self):
+        tup = get_systems(self._parent).by_qid(self.value, self._qid)
+        return Quantity_Tuple(*tup)
+
     def in_sys(self):
-        tup = get_systems(self._parent).unitise(self.value, self.spec)
+        if self._qid is not None:
+            tup = get_systems(self._parent).by_qid(self.value, self._qid)
+        else:
+            tup = get_systems(self._parent).unitise(self.value, self.spec)
         return Quantity_Tuple(*tup)
 
     def str_in_sys(self):

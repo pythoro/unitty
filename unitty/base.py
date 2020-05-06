@@ -149,7 +149,7 @@ class Units():
     def __getitem__(self, abbr):
         if abbr in self.units:
             return self.units[abbr]
-        raise KeyError(str(abbr) + ' not defined')
+        return self.from_str(abbr)
 
     def __getattr__(self, abbr):
         if abbr not in ['units', 'bases'] and abbr in self.units:

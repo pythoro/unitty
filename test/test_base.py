@@ -208,4 +208,17 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(unit.abbr, 'm/s2')
         self.assertTrue(unit.abbr, b.units)
         self.assertEqual(len(b.units), n_current + 2)
+
+    def test_from_str_2(self):
+        b = base.Units(raw=TEST_DICT_5)
+        s = '1/lbs'
+        unit = b.from_str(s)
+        self.assertEqual(unit.abbr, '1/lbs')
+        self.assertEqual(unit.value, 1 / 0.45359237)
         
+    def test_from_str_3(self):
+        b = base.Units(raw=TEST_DICT_5)
+        s = 'ft/lbs'
+        unit = b.from_str(s)
+        self.assertEqual(unit.abbr, 'ft/lbs')
+        self.assertAlmostEqual(unit.value, (12*0.0254) / (0.45359237))
