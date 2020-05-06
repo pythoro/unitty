@@ -147,6 +147,10 @@ class Units():
                     + ' missing from specification.')
 
     def __getitem__(self, abbr):
+        if isinstance(abbr, tuple):
+            u = self.from_str(abbr[0])
+            u.set_qid(abbr[1])
+            return u
         if abbr in self.units:
             return self.units[abbr]
         return self.from_str(abbr)

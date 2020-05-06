@@ -205,7 +205,7 @@ class Test_Units(unittest.TestCase):
         n_current = len(b.units)
         s = 'm/s2'
         unit = b.from_str(s)
-        self.assertEqual(unit.abbr, 'm/s2')
+        self.assertEqual(unit.abbr, s)
         self.assertTrue(unit.abbr, b.units)
         self.assertEqual(len(b.units), n_current + 2)
 
@@ -213,12 +213,20 @@ class Test_Units(unittest.TestCase):
         b = base.Units(raw=TEST_DICT_5)
         s = '1/lbs'
         unit = b.from_str(s)
-        self.assertEqual(unit.abbr, '1/lbs')
+        self.assertEqual(unit.abbr, s)
         self.assertEqual(unit.value, 1 / 0.45359237)
         
     def test_from_str_3(self):
         b = base.Units(raw=TEST_DICT_5)
         s = 'ft/lbs'
         unit = b.from_str(s)
-        self.assertEqual(unit.abbr, 'ft/lbs')
+        self.assertEqual(unit.abbr, s)
         self.assertAlmostEqual(unit.value, (12*0.0254) / (0.45359237))
+
+    def test_getattr_with_qid(self):
+        b = base.Units(raw=TEST_DICT_5)
+        qid = 'test_qid'
+        s = 'ft/lbs'
+        unit = b[s, qid]
+        self.assertEqual(unit.abbr, s)
+        self.assertEqual(unit._qid, qid)
