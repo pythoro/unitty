@@ -140,6 +140,12 @@ class Test_Units(unittest.TestCase):
         self.assertEqual(u.value, 0.001)
         self.assertEqual(u.abbr, 'mm')
         
+    def test_getitem_mm2(self):
+        b = base.Units(raw=TEST_DICT_2)
+        u = b['mm2']
+        self.assertEqual(u.value, 1e-6)
+        self.assertEqual(u.abbr, 'mm2')
+        
     def test_get_by_index(self):
         b = base.Units(raw=TEST_DICT_2)
         ret = b.get_by_index(2)
