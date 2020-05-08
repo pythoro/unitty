@@ -53,7 +53,7 @@ class Quantity():
     def in_sys(self):
         if self._ref is not None:
             tup = get_systems(self._parent).by_ref(self.value, self._ref)
-        else:
+        if self._ref is None or tup is None:
             tup = get_systems(self._parent).unitise(self.value, self.spec)
         return Quantity_Tuple(*tup)
 
