@@ -16,7 +16,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 class Systems():
     def __init__(self, fname=None, raw=None):
-        self.refs = {}
+        self._refs = {}
         self._units = get_units(get_active())
         if fname is None and raw is None:
             fname = os.path.join(root, 'systems') + '.yaml'
@@ -67,6 +67,8 @@ class Systems():
         self._refs = dct
         
     def by_ref(self, val, ref):
+        if ref not in self._refs:
+            return None
         unit_str = self._refs[ref][self._active]
         u = self._units[unit_str]
         value = val / u.value
