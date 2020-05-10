@@ -13,6 +13,32 @@ from collections import namedtuple
 Quantity_Tuple = namedtuple('Quantity_Tuple', ['value', 'units'])
 
 class Quantity():
+    """ The core object that combines magnitude and dimensional information.
+    
+    Args:
+        value (int, float, arraylike) : A float representing the magnitude of
+            the quantity in terms of base dimensions (length, time, mass, etc)
+            spec: A list of signed integers. For simple units, there will be
+            only one integer. For compound units (e.g. m/s), there will be
+            more than one. The integers correspond to other Quantities.
+            Positive integers indicate the are multiplied, while negative
+            integers indicate they are divided.
+        vector (ndarray): Each base dimensions is independent, and the exponent
+            for each base dimension is represented as a number. This vectore is
+            an array of such numbers for all base dimensions. This allows quick
+            and robust dimensionality checking.
+        abbr (str): [optional] The abbreviation of the Quantity (usually
+                 for Units)
+        name (str): [optional] The name of the Quantity (usually for Units)
+        parent (str): [optional] The name of the Units instance it belongs to.
+            This is important, since otherwise the spec doesn't make any sense.
+        
+    Note:
+        Normally, Quantities would only be created automatically or from
+        other Quantities, not directly by the user.
+        
+"""
+    
     def __init__(self, value, spec, vector, abbr=None, name=None,
                  parent=None):
         self.value = value
@@ -24,6 +50,7 @@ class Quantity():
         self._ref = None
         
     def set_units(self, unit):
+        """ Set the units for this quantity """
         if any(unit.vector != self.vector):
             raise ValueError('Incompatible quantity type')
         self.spec = unit.spec

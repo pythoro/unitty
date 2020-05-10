@@ -3,6 +3,10 @@
 Created on Thu Apr 30 18:15:23 2020
 
 @author: Reuben
+
+The base module for the Units class, which creates and contains a full
+working set of units.
+
 """
 
 import os
@@ -16,6 +20,32 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Units():
+    """ Container for and creator of Unit instances. 
+    
+    Args:
+        fname (str): [Optional] An input definition file in yaml format. If 
+            both fname and raw are omitted, the default units are loaded.
+        raw (dict): [Optional] If passed, while fname is left as None, 
+            this data will be used to create the units.
+            
+    A Units instance stores a set of indices to convert between integers 
+    and strings, along with a dictionary of Unit instances. The reason for
+    storing the indices is because Quantity instances use integers for their
+    specification (spec).
+    
+    Each Unit instance is keyed by its abbreviation (e.g. 'mm')
+    and has a match inverse (e.g. '1/mm' Unit instance that prefixes that
+    abbreviation with a '-' (e.g. '-m'). The index number of an inverse unit
+    is the negative of the normal unit (e.g. if 'mm' is 13, '-mm' would be
+    -13). To avoid a lot
+    of string manipulation, unitty specifies units and quantities with 
+    signed integers. The indices in the Units class helps those integers map
+    to the right units.
+    
+    It's the job of the Units class to load in the
+    specified units and set up the units, vectors, and indices for them.
+                
+    """
     def __init__(self, fname=None, raw=None):
         if fname is None and raw is None:
             fname = os.path.join(root, 'units') + '.yaml'
@@ -23,6 +53,7 @@ class Units():
         self.load(raw)
     
     def _ind(self, s):
+        """ Get the index of a string """
         if s in self._ind_dct:
             return self._ind_dct[s]
         index = len(self._num_dct) // 2 + 1
@@ -33,9 +64,11 @@ class Units():
         return index
     
     def str(self, ind):
+        """ Return the string for an index number """
         return self._num_dct[ind]
             
     def _new(self, index, value, vector, spec, name, utype):
+        """ Internal creation of one unit """
         abbr = self.str(index)
         if abbr in self.units:
             raise KeyError(abbr + ' is already defined.')
@@ -45,6 +78,13 @@ class Units():
         return u
     
     def new(self, index, value, vector, spec, name, utype):
+        """ Create a new unit 
+        
+        
+        TODO: Use of the index here is unnecessary. Could replace with 
+        the abbreviation.
+        
+        """ 
         u = self._new(index, value, vector, spec, name, utype)
         # Now make the corresponding inverse ('negative') unit
         spec = [-s for s in spec]
@@ -52,6 +92,13 @@ class Units():
         return u
     
     def _make_utypes(self, types):
+        """ Make the base types (length, time, etc) 
+        
+        Args:
+            types (list[str]): A list of base type strings. These can be
+                anything, but the base units need to refer to them.
+                
+        """
         self.utypes = types
         def vec(ind):
             a = np.zeros(len(types))
