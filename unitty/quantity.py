@@ -50,7 +50,11 @@ class Quantity():
         self._ref = None
         
     def set_units(self, unit):
-        """ Set the units for this quantity """
+        """ Set the units for this quantity 
+        
+        Args:
+            unit (Quantity): A Quantity or Unit instance.
+        """
         if any(unit.vector != self.vector):
             raise ValueError('Incompatible quantity type')
         self.spec = unit.spec
@@ -58,9 +62,24 @@ class Quantity():
         self.name = unit.name if unit.name is not None else None
                 
     def set_ref(self, ref):
+        """ Set the reference name for this quantity 
+        
+        Args:
+            ref (str): The reference name
+        """
         self._ref = ref
         
     def in_units(self, unit=None):
+        """ Express the Quantity in particular units 
+        
+        Args:
+            unit (Unit): [Optional] The units to express this Quantity in. If
+                omitted, the Quantity will be expressed in the units in which
+                it was defined.
+        
+        Returns:
+            Quantity_Tuple: A value and unit string tuple.
+        """
         if unit is not None:
             if any(unit.vector != self.vector):
                 raise ValueError('Incompatible quantity type')
@@ -71,13 +90,43 @@ class Quantity():
         return Quantity_Tuple(*tup)
 
     def str_in_units(self, unit=None):
+        """ Format the result from :meth:`in_units` into string 
+        
+        Args:
+            unit (Unit): [Optional] The units to express this Quantity in. If
+                omitted, the Quantity will be expressed in the units in which
+                it was defined.
+        
+        Returns:
+            str: A string showing the value and units of the Quantity.
+            
+        """
         return self._to_str(*self.in_units(unit))
 
     def by_ref(self):
+        """ Express the Quantity in units specified by a reference name
+                
+        Returns:
+            Quantity_Tuple: A value and unit string tuple.
+            
+        Note:
+            The value and unit string returned will depend on which
+            unit system is active. Named references must specify units
+            for the active system (See :meth:`system.Systems.set_refs`).
+        """
         tup = get_systems(self._parent).by_ref(self.value, self._ref)
         return Quantity_Tuple(*tup)
 
     def in_sys(self):
+        """ Express the Quantity in units specified by the active system.
+        
+        Returns:
+            Quantity_Tuple: A value and unit string tuple.
+            
+        Note:
+            The value and unit string returned will depend on which
+            unit system is active. See the :mod:`system` module.
+        """
         if self._ref is not None:
             tup = get_systems(self._parent).by_ref(self.value, self._ref)
         if self._ref is None or tup is None:
@@ -85,6 +134,12 @@ class Quantity():
         return Quantity_Tuple(*tup)
 
     def str_in_sys(self):
+        """ Format the result from :meth:`in_sys` into string 
+        
+        Returns:
+            str: A string showing the value and units of the Quantity.
+            
+        """
         return self._to_str(*self.in_sys())
 
     def in_base(self):
