@@ -3,6 +3,11 @@
 Created on Thu May  7 10:54:00 2020
 
 @author: Reuben
+
+The :mod:`utils` module contains helper functions to allow users to quickly
+process input or output data, automatically converting between units as
+required.
+
 """
 
 from . import get_units

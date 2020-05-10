@@ -3,6 +3,25 @@
 Created on Fri May  1 11:20:07 2020
 
 @author: Reuben
+
+This module is responsible for the unit systems desired by the user. Quantities
+all share the same underlying base dimensions. For example, a meter and a 
+foot both share the underlying length dimension, although they represent 
+different scaling factors. 
+
+A unit system indicates what kinds of units the user would like to use for
+given types of dimensions. For example, in the length dimension, the metric
+unit system would specify units like millimeter, meter, and kilometer. On the
+other hand, the US imperial system would specify units such as inch, foot, 
+and mile. 
+
+Unitty allows unit systems to be switched on the fly. This is made possible
+by the Systems class, which contains a number of System classes and keeps 
+track of which one is currently active.
+
+Normally, the user would not instantiate Systems or System objects directly,
+but would use api functions.
+
 """
 
 import os

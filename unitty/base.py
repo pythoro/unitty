@@ -7,6 +7,9 @@ Created on Thu Apr 30 18:15:23 2020
 The base module for the Units class, which creates and contains a full
 working set of units.
 
+Normally, the user would not instantiate Units objects directly,
+but would use api functions.
+
 """
 
 import os

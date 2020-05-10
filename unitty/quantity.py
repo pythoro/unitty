@@ -3,6 +3,11 @@
 Created on Fri May  1 11:52:26 2020
 
 @author: Reuben
+
+The Quantity class combines a magnitude with dimensional information that gives
+that magnitude meaning. Quantity objects wrap a value with information about
+the dimensions. The value can be a scalar or array.
+
 """
 
 from . import settings, get_active, get_units, get_systems
@@ -270,6 +275,8 @@ class Quantity():
 
     def _pow(self, other):
         new = self
+        if other % 1 != 0:
+            raise ValueError('Units can only be raised to integer powers.')
         for n in range(other - 1):
             new = new._mul(self)
         return new
