@@ -47,8 +47,9 @@ class Systems():
     def unitise(self, val, utype):
         return self._sys_dct[self._active].unitise(val, utype)
 
-    def base_unitise(self, val, type_vec):
-        return self._sys_dct[self._active].base_unitise(val, type_vec)
+    def base_unitise(self, val, type_vec, dimensional=False):
+        return self._sys_dct[self._active].base_unitise(val, type_vec,
+                            dimensional)
 
     def unitise_typed(self, val, spec):
         return self._sys_dct[self._active].unitise_typed(val, spec)
@@ -137,12 +138,12 @@ class System():
         ind = a.index(min(a))
         return i_vals[ind]
 
-    def _base_unitise_one(self, val, spec):
+    def _base_unitise_one(self, val, spec, dimensional=False):
         div = False
         if spec < 0:
             div = True
         utype_i = abs(self._units._utypes[spec]) # length, force, etc
-        if utype_i in self._units.bases:
+        if not dimensional and utype_i in self._units.bases:
             b = self._units.bases[utype_i] # m, N etc
         else:
             b = utype_i
@@ -163,12 +164,12 @@ class System():
         s = self._units.str_spec(out_spec)
         return new_val, s
     
-    def base_unitise(self, val, vector):
+    def base_unitise(self, val, vector, dimensional=False):
         base_spec = self.calc_utypes(vector)
         new_val = val
         spec = []
         for u in base_spec:
-            new_val, ut = self._base_unitise_one(new_val, u)
+            new_val, ut = self._base_unitise_one(new_val, u, dimensional)
             spec.append(ut)
         s = self._units.str_spec(spec)
         return new_val, s

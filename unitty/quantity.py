@@ -142,12 +142,34 @@ class Quantity():
         """
         return self._to_str(*self.in_sys())
 
-    def in_base(self):
-        tup = get_systems(self._parent).base_unitise(self.value, self.vector)
+    def in_base(self, dimensional=False):
+        """ Express the Quantity in base units.
+        
+        Returns:
+            Quantity_Tuple: A value and unit string tuple.
+            
+        Note:
+            The value and unit string returned will *not* depend on which
+            unit system is active.
+        """
+        tup = get_systems(self._parent).base_unitise(self.value, self.vector,
+                         dimensional)
         return Quantity_Tuple(*tup)
 
-    def str_in_base(self):
-        return self._to_str(*self.in_base())
+    def str_in_base(self, dimensional=False):
+        """ Format the result from :meth:`in_base` into string 
+        
+        Returns:
+            str: A string showing the value and units of the Quantity.
+            
+        """
+        return self._to_str(*self.in_base(dimensional))
+    
+    def in_dimensions(self):
+        return self.in_base(dimensional=True)
+
+    def str_in_dimensions(self):
+        return self.str_in_base(dimensional=True)
     
     def _to_str(self, value, spec):
         if isinstance(value, np.ndarray):
