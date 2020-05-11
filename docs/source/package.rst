@@ -6,6 +6,7 @@ Package documentation
    :caption: Contents:
    
    unitty
+   unitty.namespace
    unitty.base
    unitty.quantity
    unitty.unit
