@@ -7,7 +7,7 @@ Created on Fri May  1 11:20:07 2020
 This module is responsible for the unit systems desired by the user. Quantities
 all share the same underlying base dimensions. For example, a meter and a 
 foot both share the underlying length dimension, although they represent 
-different scaling factors. 
+different scaling factors.
 
 A unit system indicates what kinds of units the user would like to use for
 given types of dimensions. For example, in the length dimension, the metric
@@ -34,6 +34,17 @@ root = os.path.dirname(os.path.abspath(__file__))
 
 
 class Systems():
+    """ Manage multiple unit systems and allow switching between them
+    
+    Args:
+        fname (str): [Optional] The yaml file from which to read in systems
+            information. If omitted when raw is omitted, the defaults are
+            loaded.
+        raw (dict): [Optional] If passed when fname is omitted, this
+            data is used to initialise the instance. See the :meth:`load`
+            method for details on structure.
+    
+    """
     def __init__(self, fname=None, raw=None):
         self._refs = {}
         self._units = get_units(get_active())
@@ -43,6 +54,32 @@ class Systems():
         self.load(raw)
     
     def load(self, raw):
+        """ Load raw data 
+        
+        Args:
+            raw (dict): A dictionary containing keys for all base dimensions
+            specified in the current Units instance (e.g. length, time). See
+            notes for details.
+            
+        Notes:
+            The input must be a dictionary containing keys for all base
+            dimensions specified in the current Units instance (e.g. length,
+            time). The corresponding values must be lists of units to use
+            for those dimensions. Unless otherwise directed (e.g. by
+            named references), the unit that results in a value closest to 10
+            will be used for a given dimension.
+            
+        Example:
+            Here's a simple example::
+                
+                raw = {'metric':
+                            {'length': ['mm', 'm'', 'km'],
+                             'mass': ['g', 'kg', 'tonne']},
+                       'US':
+                            {'length': ['in', 'ft', 'mile'],
+                             'mass': ['USoz', 'lbs']}}
+            
+        """
         self._sys_dct = self._make_sys_dct(raw)
         for name in self._sys_dct.keys():
             self._active = name
@@ -57,13 +94,45 @@ class Systems():
         return {n: System(dct) for n, dct in raw.items()}
     
     def set_active(self, name):
+        """ Set the currently active system 
+        
+        Args:
+            name (str): The system name. 
+            
+        """
         self._active = name
     
     @property
     def active(self):
+        """ Return the active system
+        
+        Returns:
+            System: The active system.
+        """
         return self._sys_dct[self._active]
         
     def unitise(self, val, spec):
+        """ Express a value in units specified by the active system.
+        
+        Args:
+            val (float, arraylike): The value with respect to base dimensions
+                like length, time, etc.
+            spec (list[int]): A list of integers corresponding to the units
+                in which val is defined. These are used to indicate 
+                the dimensionality.
+        
+        Returns:
+            tuple: A value and unit string tuple.
+            
+        Notes:
+            The value and unit string returned will depend on which
+            unit system is active. See the :mod:`system` module.
+            
+            The spec is used because it is sometimes more desirable to
+            expressed a value in derived dimensions (e.g. force), rather 
+            than base dimensions (for force, this would be a combination of
+            length, time, and distance). 
+        """
         return self._sys_dct[self._active].unitise(val, spec)
 
     def base_unitise(self, val, vector, dimensional=False):

@@ -8,6 +8,14 @@ The Quantity class combines a magnitude with dimensional information that gives
 that magnitude meaning. Quantity objects wrap a value with information about
 the dimensions. The value can be a scalar or array.
 
+Quantities are always expressed in terms of other quantities, with the 
+exception of *base dimensions* like length, time, mass, etc. `unitty` imposes
+no restrictions on what these base dimensions are. They may also include
+derived base dimensions, such as force or pressure. Quantities defined
+by derived base dimensions will understand the underlying dimensionality 
+that defines them, but also their preferred expression of
+force, pressure, etc.
+
 """
 
 from . import settings, get_active, get_units, get_systems

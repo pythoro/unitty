@@ -10,6 +10,38 @@ working set of units.
 Normally, the user would not instantiate Units objects directly,
 but would use api functions.
 
+
+Specifying units
+----------------
+
+Units are specified using a dictionary structure. Here's an example::
+    
+    raw = {'base_types': ['length', 'mass', 'time', 'force'],
+       'length': {'_base': 'm', 
+                'm': [1.0, 'length', 'meter'],
+                'mm': [0.001, 'm', 'millimeter']},
+       'mass': {'_base': 'kg', 
+                'kg': [1.0, 'mass', 'kilogram']},
+       'time': {'_base': 's', 
+                's': [1.0, 'time', 'second']},
+       'force': {'_base': 'N', 
+                'N': [1.0, ['kg', 'm', '-s', '-s'], 'newton']}}
+
+The first key needs to be 'base_types', and contain a list of the base
+dimensions that form the basis of all the units. Some base types are
+irreducable and independent, such as length, mass, and time in the above
+example. Some base types are derived, such as force in the above example.
+
+After 'base_types', each key needs to be one of the base types. The value
+for each key needs to be another dictionary, which contains:
+    
+* _base: A string indicating which unit should be considered the base unit
+    for this dimension. The data for that unit must be present within the .
+* a key for each unit: They key is the unit abbreviation. The value needs to
+    be a list, which contains everything needed to define the unit.
+    
+    
+
 """
 
 import os
