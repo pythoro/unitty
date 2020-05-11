@@ -17,7 +17,7 @@ def split_str(s):
     
     Args:
         s (str): A string with units at the end in square brackets (e.g.
-        'widget.length [mm]').
+          'widget.length [mm]').
     
     Returns:
         tuple: The string with it's units stripped (e.g. 'widget.length'),
@@ -29,7 +29,7 @@ def split_str(s):
         split_str('length ['mm'])
         # ('length', 'mm')
         
-        split_str('a long string with spaces ['W/m2'])
+        split_str('a long string with spaces [W/m2]')
         # ('a long string with spaces', 'W/m2')
         
     """
@@ -44,7 +44,7 @@ def str_to_unit(s):
     
     Args:
         s (str): A string with units at the end in square brackets (e.g.
-        'widget.length [mm]').
+          'widget.length [mm]').
     
     Returns:
         Unit: The Unit instance corresponding to the string. If it is not
@@ -60,9 +60,9 @@ def make_qty(s, val):
     
     Args:
         s (str): A string with units at the end in square brackets (e.g.
-        'widget.length [mm]').
+          'widget.length [mm]').
         val (int, float, arraylike): A value in the units indicated within
-        the string, `s`. 
+            the string, `s`. 
     
     Returns:
         Quantity: The Quantity specified by the value and units. The Quantity
@@ -96,7 +96,7 @@ def split_qty(q, name=None):
     Args:
         q (Quantity): The quantity
         name (str): [Optional] The name to use for the string. If omitted,
-        the name will default to the reference set in the Quantity. 
+            the name will default to the reference set in the Quantity. 
         
     Returns:
         tuple: A string with units suffixed in square brackets, and the value
@@ -114,7 +114,7 @@ def transform_pair(s, val):
     
     Args:
         s (str): A string with units at the end in square brackets (e.g.
-        'widget.length [ft]').
+          'widget.length [ft]').
         val (int, float, arraylike): The value in those units.
         
     Returns:
@@ -133,8 +133,8 @@ def transform_dict(dct):
     
     Args:
         dct (dict): Each key should be a name with units suffixed in square
-        brackets (e.g. 'widget.length [mm]'). Each key should be the 
-        magnitude of the quantity expressed in those units.
+            brackets (e.g. 'widget.length [mm]'). Each key should be the 
+            magnitude of the quantity expressed in those units.
     
     Returns:
         dct (dict): A transformed dictionary, in which the keys have units
@@ -151,7 +151,7 @@ def transform_list_of_dicts(lst):
     
     Args:
         lst (list): A list of dictionaries as for the :func:`transform_dict`
-        function.
+            function.
         
     Returns:
         list: A list of dictionaries, where each is the output of the 
@@ -165,7 +165,7 @@ def transform_df(df):
     
     Args:
         df (DataFrame): A pandas dataframe. Column names with units should
-        have them within square brackets at the end of each name.
+            have them within square brackets at the end of each name.
         
     Returns:
         DataFrame: A dataframe in which the column units have been changed
