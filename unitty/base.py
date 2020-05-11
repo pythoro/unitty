@@ -8,13 +8,15 @@ The base module for the Units class, which creates and contains a full
 working set of units.
 
 Normally, the user would not instantiate Units objects directly,
-but would use api functions.
+but would use api functions to load default or custom units files.
 
 
 Specifying units
 ----------------
 
-Units are specified using a dictionary structure. Here's an example::
+Units are often specified in a yaml file, which is a more convenient format
+to read. That gets converted into a dictionary structure that specifies the 
+units. Here's a very small example of one such structure::
     
     raw = {'base_types': ['length', 'mass', 'time', 'force'],
        'length': {'_base': 'm', 
@@ -38,10 +40,31 @@ for each key needs to be another dictionary, which contains:
 * _base: A string indicating which unit should be considered the base unit
     for this dimension. The data for that unit must be present within the .
 * a key for each unit: They key is the unit abbreviation. The value needs to
-    be a list, which contains everything needed to define the unit.
+    be a list, which contains everything needed to define the unit as 
+    described below.
     
-    
+The list format to specify a unit:
+==================================
 
+Each unit is defined by a list. The abbreviation is used as a key for the list.
+
+* Item 0: The value of the unit. This is the scale factor for the unit, or how
+    large this unit is with respect to the others by which it is defined (see
+    Item 1)
+* Item 1: This contains the specification of how this unit is defined. It must
+    be either a string or a list of strings. Each string indicates a unit
+    or base dimension that *must be defined earlier in the dictionary*! (Note
+    that dictionaries respect ordering in Python 3.6 and above.)
+    In the above example, 'm' is defined as 1.0 * length - length is a base
+    dimension. 'mm' is defined as 0.001 * 'm'. 'N' is defined as a compound
+    unit (kg.m/s2). *The 's' units (seconds) are prefixed by '-' to indicate
+    they are in the denominator*.
+* Item 3: A string to indicate the full name of the unit.
+* Item 4: [Optional] A dictionary of extra parameters. Currently, one is
+    supported:
+    * SI_Prefixes: A list of SI prefixes (each a str) to use for the unit.
+        Units will be created automatically for each prefix specified.
+    
 """
 
 import os
@@ -114,7 +137,6 @@ class Units():
     
     def new(self, index, value, vector, spec, name, utype):
         """ Create a new unit 
-        
         
         TODO: Use of the index here is unnecessary. Could replace with 
         the abbreviation.
