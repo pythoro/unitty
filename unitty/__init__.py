@@ -87,62 +87,62 @@ settings = {
 active = None
 container = {}
 
-def get_units(name=None):
+def get_units(group=None):
     """ Get the Units instance 
     
     Args:
-        name (str): [Optional] The name of the group. If None, returns the
+        group (str): [Optional] The name of the group. If None, returns the
         Units instance from the currently active group.
         
     Returns:
         Units: A Units instance.
         
     """
-    name = active if name is None else name
-    return container[name]['units']
+    group = active if group is None else group
+    return container[group]['units']
 
-def get_systems(name=None):
+def get_systems(group=None):
     """ Get the Systems instance 
     
     Args:
-        name (str): [Optional] The name of the group. If None, returns the
+        group (str): [Optional] The name of the group. If None, returns the
         Systems instance in the currently active group.
         
     Returns:
         Systems: A Systems instance.
     """
-    name = active if name is None else name
-    return container[name]['systems']
+    group = active if group is None else group
+    return container[group]['systems']
 
-def get_system(name=None):
+def get_system(group=None):
     """ Get the currently active System instance 
     
     Args:
-        name (str): [Optional] The name of the group. If None, returns the
+        group (str): [Optional] The name of the group. If None, returns the
         currently active System instance from the currently active group.
         
     Returns:
         Systems: A Systems instance.
     """
-    name = active if name is None else name
-    return container[name]['systems'].active
+    group = active if group is None else group
+    return container[group]['systems'].active
 
 def get_active():
     """ Return a string of the currently active group """
     return active
 
-def set_system(sys_name, name=None):
+def set_system(sys_name, group=None):
     """ Make the named unit system active
     
     Args:
         sys_name (str): The name of the unit system to activate
-        name (str): [Optional] The name of the group. The unit system is
+        group (str): [Optional] The name of the group. The unit system is
         set within the Systems instance of that group. Defaults to the 
         currently active group.
     
     """
-    name = active if name is None else name
-    systems = get_systems(name)
+    group = active if group is None else group
+    systems = get_systems(group)
     systems.set_active(sys_name)
 
 from . import base
@@ -151,7 +151,7 @@ from . import quantity
 from . import unit
 from . import utils
 
-def setup(name,
+def setup(group,
           units_fname=None,
           units_raw=None,
           sys_fname=None,
@@ -159,7 +159,7 @@ def setup(name,
     """ Setup a new group of Units, Systems, and System instances
     
     Args:
-        name (str): The name of the group
+        group (str): The name of the group
         units_fname (str): [Optional] The filename of the input file to use
         for the Units class. If omitted, the default is loaded.
         units_raw (dict): [Optional] A dictionary of unit data to use. If 
@@ -171,12 +171,12 @@ def setup(name,
         
     """
     global active
-    container[name] = {}
-    active = name
+    container[group] = {}
+    active = group
     units = base.Units(fname=units_fname, raw=units_raw)
-    container[name]['units'] = units
+    container[group]['units'] = units
     systems = system.Systems(fname=sys_fname, raw=sys_raw)
-    container[name]['systems'] = systems
+    container[group]['systems'] = systems
     
 try:
     setup('default')
