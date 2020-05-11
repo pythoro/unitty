@@ -15,14 +15,14 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setuptools.setup(
     name="unitty",
-    version="0.0.2",
+    version="0.0.3",
     author="Reuben Rusk",
     author_email="pythoro@mindquip.com",
     description="Switch between unit systems without changing code",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pythoro/unitty.git",
-    download_url="https://github.com/pythoro/unitty/archive/v0.0.2.zip",
+    download_url="https://github.com/pythoro/unitty/archive/v0.0.3.zip",
     packages=['unitty'],
     keywords=['UNIT', 'UNITS', 'UTILITY'],
     classifiers=[
