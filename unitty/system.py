@@ -63,11 +63,11 @@ class Systems():
     def active(self):
         return self._sys_dct[self._active]
         
-    def unitise(self, val, utype):
-        return self._sys_dct[self._active].unitise(val, utype)
+    def unitise(self, val, spec):
+        return self._sys_dct[self._active].unitise(val, spec)
 
-    def base_unitise(self, val, type_vec, dimensional=False):
-        return self._sys_dct[self._active].base_unitise(val, type_vec,
+    def base_unitise(self, val, vector, dimensional=False):
+        return self._sys_dct[self._active].base_unitise(val, vector,
                             dimensional)
 
     def unitise_typed(self, val, spec):
