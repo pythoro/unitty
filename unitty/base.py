@@ -37,33 +37,34 @@ example. Some base types are derived, such as force in the above example.
 After 'base_types', each key needs to be one of the base types. The value
 for each key needs to be another dictionary, which contains:
     
-* _base: A string indicating which unit should be considered the base unit
-    for this dimension. The data for that unit must be present within the .
-* a key for each unit: They key is the unit abbreviation. The value needs to
-    be a list, which contains everything needed to define the unit as 
-    described below.
+* **_base:** A string indicating which unit should be considered the base unit
+  for this dimension. The data for that unit must be present within the .
+* **A key for each unit:** They key is the unit abbreviation. The value needs to
+  be a list, which contains everything needed to define the unit as 
+  described below.
     
 The list format to specify a unit:
 ==================================
 
 Each unit is defined by a list. The abbreviation is used as a key for the list.
 
-* Item 0: The value of the unit. This is the scale factor for the unit, or how
-    large this unit is with respect to the others by which it is defined (see
-    Item 1)
-* Item 1: This contains the specification of how this unit is defined. It must
-    be either a string or a list of strings. Each string indicates a unit
-    or base dimension that *must be defined earlier in the dictionary*! (Note
-    that dictionaries respect ordering in Python 3.6 and above.)
-    In the above example, 'm' is defined as 1.0 * length - length is a base
-    dimension. 'mm' is defined as 0.001 * 'm'. 'N' is defined as a compound
-    unit (kg.m/s2). *The 's' units (seconds) are prefixed by '-' to indicate
-    they are in the denominator*.
-* Item 3: A string to indicate the full name of the unit.
-* Item 4: [Optional] A dictionary of extra parameters. Currently, one is
-    supported:
+* **Item 0 - Value:** The value of the unit. This is the scale factor for the 
+  unit, or how large this unit is with respect to the others by which it is
+  defined (see Item 1)
+* **Item 1 - Specification:** This contains the specification of how this unit
+  is defined. It must be either a string or a list of strings. Each string
+  indicates a unit or base dimension that *must be defined earlier in the
+  dictionary*! (Note that dictionaries respect ordering in Python 3.6 and
+  above.) In the above example, 'm' is defined as 1.0 * length - length is a
+  base dimension. 'mm' is defined as 0.001 * 'm'. 'N' is defined as a compound
+  unit (kg.m/s2). *The 's' units (seconds) are prefixed by '-' to indicate
+  they are in the denominator*.
+* **Item 3 - Name:** A string to indicate the full name of the unit.
+* **Item 4 [Optional] - Additional dictionary:** A dictionary of extra
+  parameters. Currently, one is supported.
+          
     * SI_Prefixes: A list of SI prefixes (each a str) to use for the unit.
-        Units will be created automatically for each prefix specified.
+      Units will be created automatically for each prefix specified.
     
 """
 
