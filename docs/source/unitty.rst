@@ -1,9 +1,5 @@
 Overview
-========
-
-
-Module contents
----------------
+--------
 
 .. automodule:: unitty
    :members:

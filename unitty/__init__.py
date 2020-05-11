@@ -4,7 +4,7 @@ Created on Fri May  1 11:52:42 2020
 
 @author: Reuben
 
-This section provides an overview of `unitty`.
+This section provides an overview of how the `unitty` package works.
 
 Quantities and Units classes
 ============================

@@ -13,11 +13,13 @@ systems that others might want to use (e.g. metric vs US imperial).
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
    
-   unitty
-   modules
+   overview
+   quickstart
+   package
+   alternatives
 
 
 Indices and tables
