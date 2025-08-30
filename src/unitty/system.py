@@ -25,7 +25,7 @@ but would use api functions.
 """
 
 import os
-import ruamel.yaml as yaml
+import tomllib
 import numpy as np
 import pprint
 from . import get_units, get_active
@@ -37,7 +37,7 @@ class Systems():
     """ Manage multiple unit systems and allow switching between them
     
     Args:
-        fname (str): [Optional] The yaml file from which to read in systems
+        fname (str): [Optional] The toml file from which to read in systems
             information. If omitted when raw is omitted, the defaults are
             loaded.
         raw (dict): [Optional] If passed when fname is omitted, this
@@ -49,7 +49,7 @@ class Systems():
         self._refs = {}
         self._units = get_units(get_active())
         if fname is None and raw is None:
-            fname = os.path.join(root, 'systems') + '.yaml'
+            fname = os.path.join(root, 'systems') + '.toml'
         raw = self._load_raw(fname) if raw is None else raw
         self.load(raw)
     
@@ -87,7 +87,7 @@ class Systems():
 
     def _load_raw(self, fname):
         with open(fname, 'r') as f:
-            raw = yaml.safe_load(f)
+            raw = tomllib.load(f)
         return raw
     
     def _make_sys_dct(self, raw):

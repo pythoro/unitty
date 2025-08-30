@@ -14,7 +14,7 @@ but would use api functions to load default or custom units files.
 Specifying units
 ----------------
 
-Units are often specified in a yaml file, which is a more convenient format
+Units are often specified in a toml file, which is a more convenient format
 to read. That gets converted into a dictionary structure that specifies the 
 units. Here's a very small example of one such structure::
     
@@ -69,9 +69,8 @@ Each unit is defined by a list. The abbreviation is used as a key for the list.
 """
 
 import os
-import ruamel.yaml as yaml
 import numpy as np
-
+import tomllib
 from .unit import Unit
 
 root = os.path.dirname(os.path.abspath(__file__))
@@ -82,7 +81,7 @@ class Units():
     """ Container for and creator of Unit instances. 
     
     Args:
-        fname (str): [Optional] An input definition file in yaml format. If 
+        fname (str): [Optional] An input definition file in toml format. If 
             both fname and raw are omitted, the default units are loaded.
         raw (dict): [Optional] If passed, while fname is left as None, 
             this data will be used to create the units.
@@ -107,7 +106,7 @@ class Units():
     """
     def __init__(self, fname=None, raw=None):
         if fname is None and raw is None:
-            fname = os.path.join(root, 'units') + '.yaml'
+            fname = os.path.join(root, 'units') + '.toml'
         raw = self._load_raw(fname) if raw is None else raw
         self.load(raw)
     
@@ -179,7 +178,7 @@ class Units():
     
     def _load_raw(self, fname):
         with open(fname, 'r') as f:
-            raw = yaml.safe_load(f)
+            raw = tomllib.load(f)
         return raw
     
     def safe_set(self, unit_dct, key, val):
