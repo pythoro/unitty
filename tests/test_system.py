@@ -48,7 +48,7 @@ class Test_Systems(unittest.TestCase):
     def test_val(self):
         unitty.setup('test', units_raw=TEST_DICT_5, sys_raw=TEST_SYSTEMS_1)
         u = unitty.get_units('test')
-        q = 7 * u.ft / u.lbs
+        q = 7 * (u.ft / u.lbs)
         self.assertAlmostEqual(q, 7 * (12*0.0254) / 0.45359237)
 
     def test_quantity_val(self):
