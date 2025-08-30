@@ -22,6 +22,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pythoro/unitty.git",
+    project_urls={
+        'Documentation': 'https://unitty.readthedocs.io/en/latest/',
+        'Source': 'https://github.com/pythoro/unitty.git',
+        'Tracker': 'https://github.com/pythoro/unitty/issues',
+    },
     download_url="https://github.com/pythoro/unitty/archive/v0.0.3.zip",
     packages=['unitty'],
     keywords=['UNIT', 'UNITS', 'UTILITY'],

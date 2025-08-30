@@ -31,7 +31,7 @@ class Quantity():
     Args:
         value (int, float, arraylike) : A float representing the magnitude of
             the quantity in terms of base dimensions (length, time, mass, etc)
-            spec: A list of signed integers. For simple units, there will be
+        spec: A list of signed integers. For simple units, there will be
             only one integer. For compound units (e.g. m/s), there will be
             more than one. The integers correspond to other Quantities.
             Positive integers indicate the are multiplied, while negative
