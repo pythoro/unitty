@@ -6,8 +6,8 @@ Created on Fri May  8 19:54:59 2020
 """
 
 import unittest
-import unitty
-from unitty import utils
+from unitty.legacy import utils
+import unitty.legacy as unitty
 import numpy as np
 
 PD_PRESENT = False

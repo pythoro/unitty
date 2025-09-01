@@ -6,7 +6,7 @@ Created on Tue May  5 09:46:59 2020
 """
 
 import unittest
-from unitty import base
+from unitty.legacy import base
 import numpy as np
 
 TEST_DICT_1 = {'base_types': ['length'],

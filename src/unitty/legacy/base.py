@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
+"""Base module.
+
 Created on Thu Apr 30 18:15:23 2020
 
 @author: Reuben

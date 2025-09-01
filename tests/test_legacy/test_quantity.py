@@ -7,7 +7,7 @@ Created on Tue May  5 10:12:00 2020
 
 import numpy as np
 import unittest
-from unitty.quantity import Quantity
+from unitty.legacy.quantity import Quantity
 
 class Test_Quantity(unittest.TestCase):
     def setUp(self):

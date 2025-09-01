@@ -6,7 +6,7 @@ Created on Wed May  6 10:29:40 2020
 """
 
 import unittest
-import unitty
+import unitty.legacy as unitty
 import numpy as np
 import os
 
