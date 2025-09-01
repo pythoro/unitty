@@ -125,10 +125,6 @@ class Unit:
         value = self.value * other
         return Unit(value, self.spec, self.vector, "Derived")
 
-    def __rmatmul__(self, value: float | int | NDArray) -> Quantity:
-        value_in_units = self.value * value
-        return Quantity(value_in_units, self.spec, self.vector, "Derived")
-
     def __rlshift__(self, value: float | int | NDArray) -> float | NDArray:
         return self.value * value
 
@@ -150,15 +146,13 @@ class Unit:
         return Unit(value, self.spec, self.vector, "Derived")
 
 
-class Quantity(Unit):
+class Quantity:
     """A quantity is a value with associated units."""
 
     def __init__(
         self,
         value: float | NDArray,
-        spec: str | list[Spec],
-        vector: NDArray,
-        desc: str,
+        unit: Unit
     ) -> None:
         """Initialize a Unit instance.
 
@@ -176,19 +170,58 @@ class Quantity(Unit):
             Normally, Quantities would only be created automatically or from
             other Quantities, not directly by the user.
         """
-        if isinstance(spec, str):
-            spec = [Spec(1.0, spec)]
-        self.value = value
-        self.spec = spec
-        self.vector = vector
-        self.desc = desc
+        self._value = value
+        self._unit = unit
+
+    @property
+    def value(self) -> float | NDArray:
+        return self._value * self._unit.value
+    
+    @property
+    def unit(self) -> Unit:
+        return self._unit
 
     def to(self, unit: Unit) -> float | NDArray:
         """Return this quantity expressed in the given unit."""
-        if any(unit.vector != self.vector):
+        if any(unit.vector != self._unit.vector):
             raise ValueError("Incompatible quantity type")
-        print(type(self.value / unit.value))
         return self.value / unit.value
+
+    def __mul__(self, other: Quantity | float | int) -> Quantity:
+        if isinstance(other, Quantity):
+            value = self._value * other._value
+            new_unit = self._unit * other._unit
+            return Quantity(value, new_unit)
+        return Quantity(self._value * other, self._unit)
+
+    def __rmul__(self, other: Quantity | float | int) -> Quantity:
+        if isinstance(other, Quantity):
+            value = self._value * other._value
+            new_unit = self._unit * other._unit
+            return Quantity(value, new_unit)
+        return Quantity(self._value * other, self._unit)
+
+    def __truediv__(self, other: Quantity | float | int) -> Quantity:
+        if isinstance(other, Quantity):
+            value = self._value / other._value
+            new_unit = self._unit / other._unit
+            return Quantity(value, new_unit)
+        return Quantity(self._value / other, self._unit)
+
+    def __rlshift__(self, value: float | int | NDArray) -> float | NDArray:
+        return self.value * value
+
+    def __pow__(self, exponent: float, modulo=None):
+        if not isinstance(exponent, float | int):
+            raise ValueError(
+                "Can only raise units to float or integer powers."
+            )
+        value = self._value ** exponent
+        new_unit = self._unit ** exponent
+        return Quantity(value, new_unit)
+
+    def __rpow__(self, other: Any, modulo=None):
+        raise ValueError("Units cannot be used as exponents.")
 
     def __array__(self):
         """For numpy
@@ -209,14 +242,13 @@ class Quantity(Unit):
             return NotImplemented
         if ufunc_name == "multiply":
             value = inputs[0] * inputs[1].value
-            return Quantity(value, self.spec, self.vector, "Derived")
+            return Quantity(value, self._unit)
         if ufunc_name == "power":
             order = inputs[1]
             value = self.value**order
-            spec = [Spec(s.order * order, s.abbr) for s in self.spec]
-            vector = self.vector * order
-            return Quantity(value, spec, vector, "Derived")
+            new_unit = self._unit**order
+            return Quantity(value, new_unit)
         elif ufunc_name == "true_divide":
             value = inputs[0] / inputs[1].value
-            return Quantity(value, self.spec, self.vector, "Derived")
+            return Quantity(value, self._unit)
         return NotImplemented

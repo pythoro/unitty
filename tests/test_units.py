@@ -3,7 +3,8 @@ from pytest import approx
 
 from unitty.units import Unit, Quantity
 from unitty import bases, config
-
+import numpy as np
+from pytest import approx
 
 class TestUnits:
     def test_base(self):
@@ -75,17 +76,16 @@ class TestQuantity:
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")
         ms = Unit.named(1e-3, sec, "ms", "millisecond")
-        qty = 5 @ ms
+        qty = Quantity(5.0, ms)
         assert isinstance(qty, Quantity)
-        assert qty.value == 5e-3
-        assert qty.vector[bases.INDICES[bases.TIME]] == 1.0
-        assert qty.spec[0].abbr == "ms"
+        assert qty.value == 0.005  # Always in base units
+        assert qty.unit is ms
 
     def test_to(self):
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")
         ms = Unit.named(1e-3, sec, "ms", "millisecond")
-        qty = 5 @ ms
+        qty = Quantity(5, ms)
         res = qty.to(sec)
         assert res == 0.005
     
@@ -93,7 +93,70 @@ class TestQuantity:
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")
         ms = Unit.named(1e-3, sec, "ms", "millisecond")
-        res = (5 @ ms).to(sec)
+        res = Quantity(5, ms).to(sec)
         assert res == 0.005
 
+    def test_to_2(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        us = Unit.named(1e-6, sec, "us", "microsecond")
+        qty = Quantity(5, ms)
+        res = qty.to(us)
+        assert res == 5000.0
 
+class TestQuantityNumpy:
+    def test_creation(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        arr = np.linspace(0, 10, 5)
+        qty = Quantity(arr, ms)
+        assert isinstance(qty, Quantity)
+        assert qty.value == approx(arr * 1e-3)  # Always in base units
+        assert qty.unit is ms
+
+    def test_mul(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        arr = np.linspace(0, 10, 5)
+        qty = Quantity(arr, ms)
+        new_qty = 5 * qty
+        assert isinstance(new_qty, Quantity)
+        assert new_qty.value == approx(5 * arr * 1e-3)  # Always in base units
+        assert new_qty.unit is ms
+
+    def test_rmul(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        arr = np.linspace(0, 10, 5)
+        qty = Quantity(arr, ms)
+        new_qty = qty * 5
+        assert isinstance(new_qty, Quantity)
+        assert new_qty.value == approx(5 * arr * 1e-3)  # Always in base units
+        assert new_qty.unit is ms
+
+    def test_truediv(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        arr = np.linspace(0, 10, 5)
+        qty = Quantity(arr, ms)
+        new_qty = qty / 5
+        assert isinstance(new_qty, Quantity)
+        assert new_qty.value == approx(arr / 5 * 1e-3)  # Always in base units
+        assert new_qty.unit is ms
+
+    def test_pow(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        arr = np.linspace(0, 10, 5)
+        qty = Quantity(arr, ms)
+        new_qty = qty ** 2
+        assert isinstance(new_qty, Quantity)
+        assert new_qty.value == approx((arr * 1e-3)**2)  # Always in base units
+        assert new_qty.unit is not ms
+        assert new_qty.unit.value == 1e-6
