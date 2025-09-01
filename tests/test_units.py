@@ -1,8 +1,8 @@
 import pytest
 from pytest import approx
 
-from unitty.units import Unit
-from unitty import bases
+from unitty.units import Unit, Quantity
+from unitty import bases, config
 
 
 class TestUnits:
@@ -62,9 +62,38 @@ class TestUnits:
         u = kg * meter / ms
         assert str(u) == "kg.m/ms"
 
-    def test_contains(self):
+    def test_value_not_quantity(self):
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")
         ms = Unit.named(1e-3, sec, "ms", "millisecond")
-        res = sec.to(ms)
-        assert res == 1000.0
+        value = 5 << ms
+        assert isinstance(value, float)
+        assert value == 5e-3
+
+class TestQuantity:
+    def test_creation(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        qty = 5 @ ms
+        assert isinstance(qty, Quantity)
+        assert qty.value == 5e-3
+        assert qty.vector[bases.INDICES[bases.TIME]] == 1.0
+        assert qty.spec[0].abbr == "ms"
+
+    def test_to(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        qty = 5 @ ms
+        res = qty.to(sec)
+        assert res == 0.005
+    
+    def test_to_parenthises(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        res = (5 @ ms).to(sec)
+        assert res == 0.005
+
+
