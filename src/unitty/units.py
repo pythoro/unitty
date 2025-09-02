@@ -120,6 +120,15 @@ class Unit:
         else:
             return f"{str_numerators}"
 
+    def __repr__(self) -> str:
+        """String representation for debugging."""
+        return self.__str__()
+
+    @property
+    def abbr(self) -> str:
+        """Get the abbreviation of the unit."""
+        return self.__str__()
+
     def _mul(self, other: Unit) -> Unit:
         """Multiply two units together.
 
@@ -198,6 +207,17 @@ class Unit:
         value = self.value * other
         return Unit(value, self.spec, self.vector, "Derived")
 
+    def to_si(self, value: float | int | NDArray) -> float | NDArray:
+        """Convert a value in this unit to SI base units.
+
+        Args:
+            value (float | int | NDArray): The value to convert.
+
+        Returns:
+            float | NDArray: The value in SI base units.
+        """
+        return self.value * value
+
     def __rlshift__(self, value: float | int | NDArray) -> float | NDArray:
         """Shift left operation for value and unit multiplication.
 
@@ -257,12 +277,40 @@ class Unit:
         return Unit(value, self.spec, self.vector, "Derived")
 
 
+def si_quantity(
+    value: float | int | NDArray, unit: Unit
+) -> float | int | NDArray:
+    """Helper function to simply convert a value in a given unit to SI.
+    
+    This can be swapped for Quantity(value, unit).
+    
+    """
+    return unit.to_si(value)
+
 class Quantity:
     """A quantity is a value with associated units.
 
     Attributes:
         _value (float | NDArray): The magnitude of the quantity.
         _unit (Unit): The unit associated with the quantity.
+
+    This class can be swapped for si_quantity(value, unit) if you want
+    just the values. This allows easy switching between having full
+    Quantity objects or just the numerical values in SI.
+
+    Instead of:
+
+    ```
+    from unitty.units import Quantity
+    ```
+
+    You can do:
+    ```
+    from unitty.units import si_quantity as Quantity
+    ```
+
+    The code then stays the same.
+
     """
 
     def __init__(self, value: float | NDArray, unit: Unit) -> None:
@@ -278,6 +326,18 @@ class Quantity:
         """
         self._value = value
         self._unit = unit
+
+    def __str__(self) -> str:
+        """Return a string representation of the quantity.
+
+        Returns:
+            str: String representation of the quantity.
+        """
+        return f"{self._value} {self._unit}"
+
+    def __repr__(self) -> str:
+        """String representation for debugging."""
+        return self.__str__()
 
     @property
     def value(self) -> float | NDArray:
@@ -312,6 +372,44 @@ class Quantity:
         if any(unit.vector != self._unit.vector):
             raise ValueError("Incompatible quantity type")
         return self.value / unit.value
+
+    def __add__(self, other: Quantity) -> Quantity:
+        """Add this quantity to another quantity.
+
+        Args:
+            other (Quantity): The quantity to add.
+
+        Returns:
+            Quantity: The resulting quantity.
+
+        Raises:
+            ValueError: If the quantities are incompatible.
+        """
+        if isinstance(other, Quantity):
+            if any(other.unit.vector != self._unit.vector):
+                raise ValueError("Incompatible quantity type")
+            value = (self.value + other.value) / self._unit.value
+            return Quantity(value, self._unit)
+        raise ValueError("Can only add Quantity to another Quantity.")
+
+    def __sub__(self, other: Quantity) -> Quantity:
+        """Add this quantity to another quantity.
+
+        Args:
+            other (Quantity): The quantity to add.
+
+        Returns:
+            Quantity: The resulting quantity.
+
+        Raises:
+            ValueError: If the quantities are incompatible.
+        """
+        if isinstance(other, Quantity):
+            if any(other.unit.vector != self._unit.vector):
+                raise ValueError("Incompatible quantity type")
+            value = (self.value - other.value) / self._unit.value
+            return Quantity(value, self._unit)
+        raise ValueError("Can only add Quantity to another Quantity.")
 
     def __mul__(self, other: Quantity | float | int) -> Quantity:
         """Multiply this quantity by another quantity or scalar.

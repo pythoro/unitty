@@ -3,7 +3,7 @@ from pytest import approx
 
 from unitty import bases
 from unitty.units import Quantity, Unit
-
+import pytest
 
 class TestUnits:
     def test_base(self):
@@ -103,6 +103,77 @@ class TestQuantity:
         qty = Quantity(5, ms)
         res = qty.to(us)
         assert res == 5000.0
+
+    def test_str(self):
+        time = Unit.base(bases.TIME)
+        sec = Unit.named(1, time, "s", "second")
+        ms = Unit.named(1e-3, sec, "ms", "millisecond")
+        qty = Quantity(5, ms)
+        assert str(qty) == "5 ms"
+
+    def test_add(self):
+        time = Unit.base(bases.TIME)
+        s = Unit.named(1, time, "s", "second")
+        time1 = Quantity(5, s)
+        time2 = Quantity(2, s)
+        total = time1 + time2
+        assert isinstance(total, Quantity)
+        assert total.unit.abbr == "s"
+        assert total.value == approx(7)
+
+    def test_add_incompatible(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        time1 = Quantity(5, s)
+        length1 = Quantity(2, m)
+        with pytest.raises(ValueError):
+            time1 + length1  # type: ignore
+
+    def test_sub(self):
+        time = Unit.base(bases.TIME)
+        s = Unit.named(1, time, "s", "second")
+        time1 = Quantity(5, s)
+        time2 = Quantity(2, s)
+        total = time1 - time2
+        assert isinstance(total, Quantity)
+        assert total.unit.abbr == "s"
+        assert total.value == approx(3)
+
+    def test_sub_incompatible(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        time1 = Quantity(5, s)
+        length1 = Quantity(2, m)
+        with pytest.raises(ValueError):
+            time1 - length1  # type: ignore
+
+    def test_multiply(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        dist = Quantity(5, m)
+        time = Quantity(2, s)
+        speed = dist * time
+        assert isinstance(speed, Quantity)
+        assert speed.unit.abbr == "m.s"
+        assert speed.value == approx(5 * 2)
+
+    def test_divide(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        dist = Quantity(5, m)
+        time = Quantity(2, s)
+        speed = dist / time
+        assert isinstance(speed, Quantity)
+        assert speed.unit.abbr == "m/s"
+        assert speed.value == approx(5 / 2)
 
 
 class TestQuantityNumpy:
