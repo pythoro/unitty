@@ -281,11 +281,12 @@ def si_quantity(
     value: float | int | NDArray, unit: Unit
 ) -> float | int | NDArray:
     """Helper function to simply convert a value in a given unit to SI.
-    
+
     This can be swapped for Quantity(value, unit).
-    
+
     """
     return unit.to_si(value)
+
 
 class Quantity:
     """A quantity is a value with associated units.
@@ -553,3 +554,26 @@ class Quantity:
             value = inputs[0] / inputs[1].value
             return Quantity(value, self._unit)
         return NotImplemented
+
+
+def quantity(
+    value: float | int | NDArray, unit: Unit, as_quantity: bool = True
+) -> Quantity | float | int | NDArray:
+    """Helper function to create a Quantity instance or a simple value.
+
+    Args:
+        value (float | int | NDArray): Magnitude of the quantity.
+        unit (Unit): The unit associated with the quantity.
+        as_quantity (bool): If True, return a Quantity instance.
+            If False, return the value in SI base units.
+
+    Returns:
+        The created Quantity instance or the value converted to SI units.
+
+    This allows for easy switching between having full Quantity objects
+    or just the numerical values in SI. But, it's not type-safe.
+
+    """
+    if as_quantity:
+        return Quantity(value, unit)
+    return unit.to_si(value)
