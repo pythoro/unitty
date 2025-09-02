@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from . import units
 from numpy.typing import NDArray
+
+from . import units
 
 
 class Measure:

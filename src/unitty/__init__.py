@@ -3,7 +3,6 @@
 This package provides simple unit management.
 """
 
-from . import config, bases, units
-from . import legacy
+from . import bases, config, legacy, units
 
 __all__ = ["legacy", "config", "bases", "units"]

@@ -1,10 +1,9 @@
-import pytest
-from pytest import approx
-
-from unitty.units import Unit, Quantity
-from unitty import bases, config
 import numpy as np
 from pytest import approx
+
+from unitty import bases
+from unitty.units import Quantity, Unit
+
 
 class TestUnits:
     def test_base(self):
@@ -21,7 +20,7 @@ class TestUnits:
         assert kg.vector[bases.INDICES[bases.MASS]] == 1.0
         assert kg.desc == "kilogram"
         assert kg.spec[0].abbr == "kg"
-    
+
     def test_mul(self):
         m = Unit.base(bases.MASS)
         s = Unit.base(bases.TIME)
@@ -50,7 +49,6 @@ class TestUnits:
         assert u.desc == "Derived"
         assert len(u.spec) == 1
         assert u.spec[0].order == 2.0
-   
 
     def test_str(self):
         mass = Unit.base(bases.MASS)
@@ -71,6 +69,7 @@ class TestUnits:
         assert isinstance(value, float)
         assert value == 5e-3
 
+
 class TestQuantity:
     def test_creation(self):
         time = Unit.base(bases.TIME)
@@ -88,7 +87,7 @@ class TestQuantity:
         qty = Quantity(5, ms)
         res = qty.to(sec)
         assert res == 0.005
-    
+
     def test_to_parenthises(self):
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")
@@ -104,6 +103,7 @@ class TestQuantity:
         qty = Quantity(5, ms)
         res = qty.to(us)
         assert res == 5000.0
+
 
 class TestQuantityNumpy:
     def test_creation(self):
@@ -155,8 +155,10 @@ class TestQuantityNumpy:
         ms = Unit.named(1e-3, sec, "ms", "millisecond")
         arr = np.linspace(0, 10, 5)
         qty = Quantity(arr, ms)
-        new_qty = qty ** 2
+        new_qty = qty**2
         assert isinstance(new_qty, Quantity)
-        assert new_qty.value == approx((arr * 1e-3)**2)  # Always in base units
+        assert new_qty.value == approx(
+            (arr * 1e-3) ** 2
+        )  # Always in base units
         assert new_qty.unit is not ms
         assert new_qty.unit.value == 1e-6
