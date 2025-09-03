@@ -1,3 +1,5 @@
+"""Systems of measurement with multiple measures and units."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -7,18 +9,46 @@ from . import units
 
 
 class Measure:
-    def __init__(self, unit_list: list[units.Unit]):
+    """A specific measure (e.g., length, time) with multiple units."""
+    def __init__(self, unit_list: list[units.Unit]) -> None:
+        """Initialize the Measure with a list of units.
+
+        Args:
+            unit_list (list[units.Unit]): A list of Unit instances that
+                belong to this measure. 
+
+        Raises:
+            ValueError: If the unit_list is empty.
+        """
         self._unit_list = unit_list
         self._unit_abbrs = {u.abbr: u for u in unit_list}
 
     def __call__(
         self, quantity: units.Quantity
     ) -> tuple[float | NDArray, units.Unit]:
+        """Convert a quantity to the most appropriate unit in this measure.
+
+        Args:
+            quantity (units.Quantity): The quantity to convert.
+
+        Returns:
+            tuple: A tuple containing the converted value and the corresponding
+                Unit instance.
+        """
         return self.convert(quantity)
 
     def convert(
         self, quantity: units.Quantity
     ) -> tuple[float | NDArray, units.Unit]:
+        """Convert a quantity to the most appropriate unit in this measure.
+
+        Args:
+            quantity (units.Quantity): The quantity to convert.
+
+        Returns:
+            tuple: A tuple containing the converted value and the corresponding
+                Unit instance.
+        """
         converteds = []
         ratios = []
         for out_unit in self._unit_list:
@@ -51,21 +81,48 @@ class Measure:
 
 
 class Measures(dict[str, Measure]):
+    """A collection of Measure instances, keyed by measure name."""
     pass
 
 
 class UnitSystem:
-    def __init__(self, measures: Measures):
+    """A system of measurement with multiple measures."""
+
+    def __init__(self, measures: Measures) -> None:
+        """Initialize the UnitSystem with a Measures instance.
+
+        Args:
+            measures (Measures): A Measures instance containing the measures
+                for this system.
+        """
         self._measures = measures
 
     def __call__(
         self, unit: units.Quantity
     ) -> tuple[float | NDArray, units.Unit]:
+        """Convert a quantity to the most appropriate unit in the system.
+
+        Args:
+            unit (units.Quantity): The quantity to convert.
+
+        Returns:
+            tuple: A tuple containing the converted value and the corresponding
+                Unit instance.
+        """
         return self.convert(unit)
 
     def convert(
         self, unit: units.Quantity
     ) -> tuple[float | NDArray, units.Unit]:
+        """Convert a quantity to the most appropriate unit in the system.
+
+        Args:
+            unit (units.Quantity): The quantity to convert.
+
+        Returns:
+            tuple: A tuple containing the converted value and the corresponding
+                Unit instance.
+        """
         for measure in self._measures.values():
             try:
                 return measure.convert(unit)
@@ -73,7 +130,7 @@ class UnitSystem:
                 continue
         raise ValueError("No suitable measure found.")
 
-    def set_measures(self, measures: Measures):
+    def set_measures(self, measures: Measures) -> None:
         """Set the Measures instance for the system.
         
         Args:
