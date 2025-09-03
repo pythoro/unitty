@@ -187,6 +187,46 @@ class TestQuantityNumpy:
         assert qty.value == approx(arr * 1e-3)  # Always in base units
         assert qty.unit is ms
 
+    def test_add(self):
+        time = Unit.base(bases.TIME)
+        s = Unit.named(1, time, "s", "second")
+        time1 = Quantity(np.array([2.0, 3.0]), s)
+        time2 = Quantity(np.array([5.0, 7.0]), s)
+        total = time1 + time2
+        assert isinstance(total, Quantity)
+        assert total.unit.abbr == "s"
+        assert total.value == approx(np.array([7.0, 10.0]))
+
+    def test_add_incompatible(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        time1 = Quantity(np.array([2.0, 3.0]), s)
+        length1 = Quantity(np.array([5.0, 7.0]), m)
+        with pytest.raises(ValueError):
+            time1 + length1  # type: ignore
+
+    def test_sub(self):
+        time = Unit.base(bases.TIME)
+        s = Unit.named(1, time, "s", "second")
+        time1 = Quantity(np.array([2.0, 3.0]), s)
+        time2 = Quantity(np.array([5.0, 7.0]), s)
+        total = time1 - time2
+        assert isinstance(total, Quantity)
+        assert total.unit.abbr == "s"
+        assert total.value == approx(np.array([-3.0, -4.0]))
+
+    def test_sub_incompatible(self):
+        time = Unit.base(bases.TIME)
+        length = Unit.base(bases.LENGTH)
+        s = Unit.named(1, time, "s", "second")
+        m = Unit.named(1, length, "m", "meter")
+        time1 = Quantity(np.array([2.0, 3.0]), s)
+        length1 = Quantity(np.array([5.0, 7.0]), m)
+        with pytest.raises(ValueError):
+            time1 - length1  # type: ignore
+
     def test_mul(self):
         time = Unit.base(bases.TIME)
         sec = Unit.named(1, time, "s", "second")

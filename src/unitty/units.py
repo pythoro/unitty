@@ -518,43 +518,6 @@ class Quantity:
         """
         return np.array(self.value)
 
-    def __array_ufunc__(
-        self,
-        ufunc: Callable,
-        method: str,
-        *inputs: float | Quantity,
-        **kwargs: float | str,
-    ) -> Quantity:
-        """For numpy interoperability with ufuncs.
-
-        Args:
-            ufunc: The numpy ufunc.
-            method: The method name.
-            *inputs: Input arguments.
-            **kwargs: Keyword arguments.
-
-        Returns:
-            Quantity | NotImplemented: Resulting quantity or NotImplemented.
-
-        See:
-            https://numpy.org/devdocs/user/basics.dispatch.html
-        """
-        ufunc_name = ufunc.__name__
-        if method != "__call__":
-            return NotImplemented
-        if ufunc_name == "multiply":
-            value = inputs[0] * inputs[1].value
-            return Quantity(value, self._unit)
-        if ufunc_name == "power":
-            order = inputs[1]
-            value = self.value**order
-            new_unit = self._unit**order
-            return Quantity(value, new_unit)
-        elif ufunc_name == "true_divide":
-            value = inputs[0] / inputs[1].value
-            return Quantity(value, self._unit)
-        return NotImplemented
-
 
 def quantity(
     value: float | int | NDArray, unit: Unit, as_quantity: bool = True
@@ -571,7 +534,7 @@ def quantity(
         The created Quantity instance or the value converted to SI units.
 
     This allows for easy switching between having full Quantity objects
-    or just the numerical values in SI. But, it's not type-safe.
+    or just the numerical values in SI. But, it's not statically type-safe.
 
     """
     if as_quantity:
