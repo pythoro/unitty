@@ -21,8 +21,8 @@ class Spec:
     abbr: str
 
 
-class Unit:
-    """The core unit object.
+class UnitBase:
+    """The core unit functionality.
 
     Represents a physical unit with magnitude, specification,
     dimensional vector, and description.
@@ -58,7 +58,7 @@ class Unit:
         self.desc = desc
 
     @classmethod
-    def base(cls, base_key: str) -> Unit:
+    def base(cls, base_key: str) -> UnitBase:
         """Create a base unit from a base key.
 
         Args:
@@ -75,7 +75,7 @@ class Unit:
         return cls(value, spec, vector, desc)
 
     @classmethod
-    def named(cls, factor: float, unit: Unit, abbr: str, desc: str) -> Unit:
+    def named(cls, factor: float, unit: Unit, abbr: str, desc: str) -> UnitBase:
         """Create a named unit from a base unit and factor.
 
         Args:
@@ -128,6 +128,36 @@ class Unit:
     def abbr(self) -> str:
         """Get the abbreviation of the unit."""
         return self.__str__()
+    
+    def to_si(self, value: float | int | NDArray) -> float | NDArray:
+        """Convert a value in this unit to SI base units.
+
+        Args:
+            value (float | int | NDArray): The value to convert.
+
+        Returns:
+            float | NDArray: The value in SI base units.
+        """
+        return self.value * value
+
+    def from_si(self, value: float | int | NDArray) -> float | NDArray:
+        """Convert an SI value to this unit.
+
+        Args:
+            value (float | int | NDArray): The SI value to convert.
+
+        Returns:
+            float | NDArray: The value in this unit.
+        """
+        return value / self.value
+
+
+class Unit(UnitBase):
+    """A normal physical unit.
+
+    A physical unit with magnitude, specification, dimensional vector,
+    and description.
+    """
 
     def _mul(self, other: Unit) -> Unit:
         """Multiply two units together.
@@ -206,17 +236,6 @@ class Unit:
             return self._mul(other)
         value = self.value * other
         return Unit(value, self.spec, self.vector, "Derived")
-
-    def to_si(self, value: float | int | NDArray) -> float | NDArray:
-        """Convert a value in this unit to SI base units.
-
-        Args:
-            value (float | int | NDArray): The value to convert.
-
-        Returns:
-            float | NDArray: The value in SI base units.
-        """
-        return self.value * value
 
     def __rlshift__(self, value: float | int | NDArray) -> float | NDArray:
         """Shift left operation for value and unit multiplication.
@@ -342,12 +361,12 @@ class Quantity:
 
     @property
     def value(self) -> float | NDArray:
-        """Get the value of the quantity in base units.
+        """Get the value of the quantity in SI units.
 
         Returns:
             float | NDArray: The value in base units.
         """
-        return self._value * self._unit.value
+        return self._unit.to_si(self._value)
 
     @property
     def unit(self) -> Unit:
@@ -372,7 +391,7 @@ class Quantity:
         """
         if any(unit.vector != self._unit.vector):
             raise ValueError("Incompatible quantity type")
-        return self.value / unit.value
+        return unit.from_si(self.value)
 
     def __add__(self, other: Quantity) -> Quantity:
         """Add this quantity to another quantity.
