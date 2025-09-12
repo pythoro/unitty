@@ -295,6 +295,73 @@ class Unit(UnitBase):
         value = self.value / other
         return Unit(value, self.spec, self.vector, "Derived")
 
+class AbsoluteUnit(UnitBase):
+    """An absolute physical unit, like temperature.
+    
+    These cannot be combined with other units, and have a zero offset.
+    """
+
+    def __init__(
+        self, value: float, spec: str | list[Spec], vector: NDArray, desc: str,
+        zero: float,
+    ) -> None:
+        """Initialize a Unit instance.
+
+        Args:
+            value (float): Magnitude of the unit.
+            spec (str | list[Spec]): Abbreviation or list of unit
+                specifications.
+            vector (NDArray): Dimensional vector for base dimensions.
+            desc (str): Description of the unit.
+
+        Note:
+            Normally, Units would only be created automatically or from
+            other Quantities, not directly by the user.
+        """
+        super().__init__(value, spec, vector, desc)
+        self.zero = zero
+
+    @classmethod
+    def named(cls, factor: float, unit: Unit, abbr: str, desc: str, zero: float) -> UnitBase:
+        """Create a named unit from a base unit and factor.
+
+        Args:
+            factor (float): Multiplicative factor for the unit.
+            unit (Unit): The base unit to derive from.
+            abbr (str): Abbreviation for the new unit.
+            desc (str): Description of the new unit.
+
+        Returns:
+            Unit: The created named unit.
+        """
+        value = factor * unit.value
+        spec = [Spec(1.0, abbr)]
+        vector = unit.vector.copy()
+        desc = desc
+        return cls(value, spec, vector, desc, zero)
+
+    def to_si(self, value: float | int | NDArray) -> float | NDArray:
+        """Convert a value in this unit to SI base units.
+
+        Args:
+            value (float | int | NDArray): The value to convert.
+
+        Returns:
+            float | NDArray: The value in SI base units.
+        """
+        return self.value * value
+
+    def from_si(self, value: float | int | NDArray) -> float | NDArray:
+        """Convert an SI value to this unit.
+
+        Args:
+            value (float | int | NDArray): The SI value to convert.
+
+        Returns:
+            float | NDArray: The value in this unit.
+        """
+        return value / self.value
+
 
 def si_quantity(
     value: float | int | NDArray, unit: Unit
